@@ -129,7 +129,7 @@ public class TelaLogin {
         case 99:
         	lblErro.setTextFill(Color.GREEN);
             lblErro.setText("Login realizado com sucesso!");
-            // Principal.trocarTela("TelaMenu");
+            Trocador.trocarTela("TelaMenu");
         }
     }
 

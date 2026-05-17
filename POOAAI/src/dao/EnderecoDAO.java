@@ -1,0 +1,53 @@
+package dao;
+
+import java.sql.*;
+import java.util.*;
+
+import model.Endereco;
+
+public class EnderecoDAO {
+
+    private Connection conn;
+
+    public EnderecoDAO(Connection conn) {
+        this.conn = conn;
+    }
+    
+    public void inserir(Endereco endereco) throws SQLException {
+        String sql = "INSERT INTO endereco (rua_endereco, bairro_endereco, cidade_endereco, UF_endereco, CEP_endereco, numero_endereco, complemento_endereco) VALUES (?, ?, ?, ?, ?, ?, ?)"; // trocara para endereco
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, endereco.getRua());
+        stmt.setString(2, endereco.getBairro());
+        stmt.setString(3, endereco.getCidade());
+        stmt.setString(4, endereco.getUf());
+        stmt.setInt(5, endereco.getCep());
+        stmt.setInt(6, endereco.getNumero());
+        stmt.setString(7, endereco.getComplemento());
+
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public List<Endereco> listar() throws SQLException {
+        List<Endereco> lista = new ArrayList<>();
+        String sql = "SELECT * FROM endereco";
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+        	Endereco endereco = new Endereco();
+        	endereco.setRua(rs.getString("rua_endereco"));
+            endereco.setBairro(rs.getString("bairro_endereco"));
+            endereco.setCidade(rs.getString("cidade_endereco"));
+            endereco.setUf(rs.getString("UF_endereco"));
+            endereco.setCep(rs.getInt("CEP_endereco"));
+            endereco.setNumero(rs.getInt("numero_endereco"));
+            endereco.setComplemento(rs.getString("complemento_endereco"));
+
+            lista.add(endereco);
+        }
+
+        return lista;
+    }
+}

@@ -36,14 +36,14 @@ public class TelaMenu {
         btnCadastroCliente.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         btnCadastroCliente.setAlignment(Pos.CENTER);
         btnCadastroCliente.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-        //btnCadastroLogin.setOnAction(e -> Principal.trocarTela("CadastroLogin")); // Ação do botão
+        btnCadastroCliente.setOnAction(e -> Trocador.trocarTela("TelaCadastroCliente")); // Ação do botão
         
         Button btnCadastroImovel = new Button("Cadastro de imovel");
         btnCadastroImovel.setPrefWidth(150);
         btnCadastroImovel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         btnCadastroImovel.setAlignment(Pos.CENTER);
         btnCadastroImovel.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-        //btnCadastroLogin.setOnAction(e -> Principal.trocarTela("CadastroImovel")); // Ação do botão
+        btnCadastroImovel.setOnAction(e -> Trocador.trocarTela("TelaCadastroImovel")); // Ação do botão
 
         
         // Adiciona todos os componentes ao VBox principal

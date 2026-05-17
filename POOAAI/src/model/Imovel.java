@@ -3,7 +3,7 @@ package model;
 public class Imovel {
 	//Atributos
 	private int idImovel;
-	private String endereco;
+	private Endereco endereco = new Endereco();
 	private String tipoPropriedade; // mudar depois
 	private int area;
 	private int valor;
@@ -11,7 +11,7 @@ public class Imovel {
 	
 	
 	//Construtor
-	public Imovel(String endereco, String tipoPropriedade, int area, int valor, int comodos) {
+	public Imovel(Endereco endereco, String tipoPropriedade, int area, int valor, int comodos) {
 		super();
 		this.endereco = endereco;
 		this.tipoPropriedade = tipoPropriedade;
@@ -23,7 +23,7 @@ public class Imovel {
 	public Imovel() {
 		super();
 	}
-
+	
 	//Getters e Setters
 	
 	public int getIdImovel() {
@@ -34,14 +34,14 @@ public class Imovel {
 		this.idImovel = idImovel;
 	}
 
-	public String getEndereco() {
+	public Endereco getEndereco() {
 		return endereco;
 	}
 
-	public void setEndereco(String endereco) {
+	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
-
+	
 	public String getTipoPropriedade() {
 		return tipoPropriedade;
 	}

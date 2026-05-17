@@ -14,11 +14,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.layout.GridPane;
 import model.Imovel;
+import model.Endereco;
 
 public class TelaCadastroImovel {
 	
-	private TextField tfEndereco;
+	private TextField tfRua;
+	private TextField tfCep;
+	private TextField tfCidade;
+	private TextField tfBairro;
+	private TextField tfUF;
+	private TextField tfNumero;
+	private TextField tfComplemento;
 	private TextField tfTipoPropriedade;
 	private TextField tfArea;
 	private TextField tfValor;
@@ -37,28 +45,86 @@ public class TelaCadastroImovel {
 		root.setStyle("-fx-background-color: linear-gradient(to bottom, #e3f2fd, #f5f5f5);");
 
 		// Título da tela
-		Label lblTitulo = new Label("Cadastro de Livros");
+		Label lblTitulo = new Label("Cadastro de Imóveis");
 		lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
 		lblTitulo.setTextFill(Color.DARKBLUE);
-
-		// HBox para linha do endereço do imovel
-		HBox hboxEndereco = new HBox(30);
-		hboxEndereco.setAlignment(Pos.CENTER_LEFT);
+		
+		// Gridpane Endereço
 		Label lblEndereco = new Label("Endereço:");
 		lblEndereco.setFont(Font.font(14));
 		lblEndereco.setPrefWidth(85);
 		lblEndereco.setMinWidth(60);
-		tfEndereco = new TextField();
-		tfEndereco.setPrefWidth(250);
-		tfEndereco.setPromptText("Digite o endereço do imóvel"); // Texto de dica
-		hboxEndereco.getChildren().addAll(lblEndereco, tfEndereco);
+		VBox vboxEndereco = new VBox(10); // Espaçamento de 20 pixels entre componentes
+		vboxEndereco.setAlignment(Pos.CENTER); // Centraliza os componentes
+		
+		Label lblCep = new Label("CEP:");
+		lblCep.setFont(Font.font(14));
+		tfCep = new TextField();
+		tfCep.setPrefWidth(250);
+		tfCep.setPromptText("00000-000"); // Texto de dica
 
+		Label lblRua = new Label("Rua:");
+		lblRua.setFont(Font.font(14));
+		tfRua = new TextField();
+		tfRua.setPrefWidth(250);
+		tfRua.setPromptText("Digite a rua do imóvel"); // Texto de dica
+		
+		Label lblCidade = new Label("Cidade:");
+		lblCidade.setFont(Font.font(14));
+		tfCidade = new TextField();
+		tfCidade.setPrefWidth(250);
+		tfCidade.setPromptText("Digite a cidade do imóvel"); // Texto de dica
+		
+		Label lblBairro = new Label("Bairro:");
+		lblBairro.setFont(Font.font(14));
+		tfBairro = new TextField();
+		tfBairro.setPrefWidth(250);
+		tfBairro.setPromptText("Digite o bairro do imóvel"); // Texto de dica
+		
+		Label lblUF = new Label("UF:");
+		lblUF.setFont(Font.font(14));
+		tfUF = new TextField();
+		tfUF.setPrefWidth(250);
+		tfUF.setPromptText("Digite a UF do imóvel"); // Texto de dica
+		
+		Label lblNumero = new Label("Número:");
+		lblNumero.setFont(Font.font(14));
+		tfNumero = new TextField();
+		tfNumero.setPrefWidth(250);
+		tfNumero.setPromptText("Digite o endereço do imóvel"); // Texto de dica
+		
+		Label lblComplemento = new Label("Complemento:");
+		lblComplemento.setFont(Font.font(14));
+		tfComplemento = new TextField();
+		tfComplemento.setPrefWidth(250);
+		tfComplemento.setPromptText("Digite o complemento do imóvel"); // Texto de dica
+		
+		GridPane grid = new GridPane();
+		grid.setHgap(10);  // espaço entre label e textfield
+		grid.setVgap(12);  // espaço entre cada linha
+		grid.setAlignment(Pos.CENTER_LEFT);
+		//    	  				col  linha
+		grid.add(lblCep,    	 0,	  0);
+		grid.add(tfCep,    	 	 1,	  0);
+		grid.add(lblRua,    	 2,	  0);
+		grid.add(tfRua,   		 3,   0);
+		grid.add(lblNumero, 	 0,	  1);
+		grid.add(tfNumero, 		 1,	  1);
+		grid.add(lblBairro,	 	 2,	  1);
+		grid.add(tfBairro, 		 3,	  1);
+		grid.add(lblCidade, 	 0,   2);
+		grid.add(tfCidade,  	 1,   2);
+		grid.add(lblUF,    	     2,   2);
+		grid.add(tfUF,       	 3,   2);
+		grid.add(lblComplemento, 0,   3);
+		grid.add(tfComplemento,  1,   3);
+		vboxEndereco.getChildren().addAll(lblEndereco, grid);
 		// HBox para linha do tipo de propriedade do imovel
 		HBox hboxTipoPropriedade = new HBox(30);
 		hboxTipoPropriedade.setAlignment(Pos.CENTER_LEFT);
 		Label lblTipoPropriedade = new Label("Tipo de propriedade:");
 		lblTipoPropriedade.setFont(Font.font(14));
-		lblTipoPropriedade.setPrefWidth(85);
+		lblTipoPropriedade.setPrefWidth(150);
 		lblTipoPropriedade.setMinWidth(60);
 		tfTipoPropriedade = new TextField();
 		tfTipoPropriedade.setPrefWidth(250);
@@ -123,19 +189,43 @@ public class TelaCadastroImovel {
 		lblErro.setStyle("-fx-padding: 10 0 0 0;");
 
 		// Adiciona todos os componentes ao VBox principal
-		root.getChildren().addAll(lblTitulo, hboxEndereco, hboxTipoPropriedade, hboxArea, hboxValor, hboxComodos, btnSalvar, lblErro);
+		root.getChildren().addAll(lblTitulo, vboxEndereco, hboxTipoPropriedade, hboxArea, hboxValor, hboxComodos, btnSalvar, lblErro);
 
 		// Cria a Scene com tamanho fixo (400x350)
-		Scene scene = new Scene(root, 450, 400);
+		Scene scene = new Scene(root, 800, 600);
 		return scene;
 	}
 
 	private boolean validarCampos() {
-        String endereco = tfEndereco.getText().trim();
+		// String rua, String bairro, String cidade, String uf, int cep, int numero, String complemento
         String tipoPropriedade = tfTipoPropriedade.getText().trim();
+        String r = tfRua.getText().trim();
+        String b = tfBairro.getText().trim();
+        String c = tfCidade.getText().trim();
+        String uf = tfUF.getText().trim();
+        String comp = tfComplemento.getText().trim();
+        
         boolean areaOk;
         boolean valorOk;
         boolean comodosOk;
+        boolean cepOk;
+        boolean numeroOk;
+        boolean ufOk;
+        
+        try {
+        	Integer.parseInt(tfCep.getText().trim());
+        	cepOk = true;
+        } catch (NumberFormatException e) {
+        	cepOk = false;
+        }
+        
+        try {
+        	Integer.parseInt(tfNumero.getText().trim());
+        	numeroOk = true;
+        } catch (NumberFormatException e) {
+        	numeroOk = false;
+        }
+        
         
         try {
         	Integer.parseInt(tfArea.getText().trim());
@@ -151,16 +241,29 @@ public class TelaCadastroImovel {
         	valorOk = false;
         }
 
-        
         try {
             Integer.parseInt(tfComodos.getText().trim());
             comodosOk = true;
         } catch (NumberFormatException e) {
         	comodosOk = false;
         }
-        		  
-        return 	!endereco.isEmpty() && 
+        
+        if(comp == null) {
+        	comp = "";
+        }
+        if(uf.length() != 2) {
+        	ufOk = false;
+        } else {
+        	ufOk = true;
+        }
+        
+        return 	!r.isEmpty() &&
+        		!b.isEmpty() &&
+        		!c.isEmpty() &&
         		!tipoPropriedade.isEmpty() && 
+        		ufOk &&
+        		cepOk &&
+        		numeroOk &&
         		valorOk &&
         		areaOk &&
         		comodosOk;
@@ -171,20 +274,21 @@ public class TelaCadastroImovel {
 		if (validarCampos()) {
 			lblErro.setTextFill(Color.GREEN);
 			lblErro.setText("Cadastro realizado com sucesso!");
-			String enderecoTxt = tfEndereco.getText().trim();
 			String tipoPropriedadeTxt = tfTipoPropriedade.getText().trim();
 			int area = Integer.parseInt(tfArea.getText().trim());
 			int valor = Integer.parseInt(tfValor.getText().trim());
 		    int comodos = Integer.parseInt(tfComodos.getText().trim());
-
-		    Imovel imovel = new Imovel (enderecoTxt, tipoPropriedadeTxt, area, valor, comodos);
+		    int numero = Integer.parseInt(tfNumero.getText().trim());
+		    int cep = Integer.parseInt(tfCep.getText().trim());
+		    Endereco endereco = new Endereco(tfRua.getText().trim(), tfBairro.getText().trim(), tfCidade.getText().trim(), tfUF.getText().trim(), cep, numero, tfComplemento.getText().trim());
+		    Imovel imovel = new Imovel (endereco, tipoPropriedadeTxt, area, valor, comodos);
 		    imovelCtrl = new ImovelController(imovel);
 		    imovelCtrl.salvarImovel();
 		    
 		} else {
 			lblErro.setTextFill(Color.RED);
 			lblErro.setText("Por favor, preencha todos os campos!");
-			tfEndereco.requestFocus(); // Foca no campo livro
+			tfCep.requestFocus(); // Foca no campo CEP
 		}
 	}
 
