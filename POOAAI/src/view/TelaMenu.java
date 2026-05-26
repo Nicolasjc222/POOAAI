@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -13,49 +12,68 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class TelaMenu {
-	
-	
-	public Scene getScene() {
-        // VBox principal para organizar os componentes verticalmente
-        VBox root = new VBox(20); // Espaçamento de 20 pixels entre componentes
-        root.setAlignment(Pos.CENTER); // Centraliza os componentes
-        root.setPadding(new Insets(40)); // Padding de 40 pixels em todos os lados
 
-        // Fundo claro para melhor aparência
+    public Scene getScene() {
+        VBox root = new VBox(40);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(60));
         root.setStyle("-fx-background-color: linear-gradient(to bottom, #e3f2fd, #f5f5f5);");
 
-        // Título da tela
-        Label lblTitulo = new Label("Menu");
-        lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        Label lblTitulo = new Label("Menu Principal");
+        lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 32));
         lblTitulo.setTextFill(Color.DARKBLUE);
 
-        
-        // Botão Entrar com estilo
-        Button btnCadastroCliente = new Button("Cadastro de cliente");
-        btnCadastroCliente.setPrefWidth(150);
-        btnCadastroCliente.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        btnCadastroCliente.setAlignment(Pos.CENTER);
-        btnCadastroCliente.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-        btnCadastroCliente.setOnAction(e -> Trocador.trocarTela("TelaCadastroCliente")); // Ação do botão
-        
-        Button btnCadastroImovel = new Button("Cadastro de imovel");
-        btnCadastroImovel.setPrefWidth(150);
-        btnCadastroImovel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        btnCadastroImovel.setAlignment(Pos.CENTER);
-        btnCadastroImovel.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-        btnCadastroImovel.setOnAction(e -> Trocador.trocarTela("TelaCadastroImovel")); // Ação do botão
+        // --- Seção Cliente ---
+        Label lblCliente = new Label("Cliente");
+        lblCliente.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        lblCliente.setTextFill(Color.DARKBLUE);
 
-        
-        // Adiciona todos os componentes ao VBox principal
-        root.getChildren().addAll(
-            lblTitulo,
-            btnCadastroCliente,
-            btnCadastroImovel
-        );
+        Button btnCadastrarCliente  = criarBotao("Cadastrar",  "#4CAF50");
+        Button btnAtualizarCliente  = criarBotao("Atualizar",  "#2196F3");
+        Button btnExcluirCliente    = criarBotao("Excluir",    "#f44336");
 
-        // Cria a Scene com tamanho fixo
-        Scene scene = new Scene(root, 1280, 720);
-        return scene;
+        btnCadastrarCliente.setOnAction(e -> Trocador.trocarTela("TelaCadastroCliente"));
+        btnAtualizarCliente.setOnAction(e -> Trocador.trocarTela("TelaAtualizarCliente"));
+        btnExcluirCliente.setOnAction(e ->   Trocador.trocarTela("TelaRemoverCliente"));
+
+        HBox hboxCliente = new HBox(20, btnCadastrarCliente, btnAtualizarCliente, btnExcluirCliente);
+        hboxCliente.setAlignment(Pos.CENTER);
+
+        VBox vboxCliente = new VBox(12, lblCliente, hboxCliente);
+        vboxCliente.setAlignment(Pos.CENTER);
+        vboxCliente.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
+
+        // --- Seção Imóvel ---
+        Label lblImovel = new Label("Imóvel");
+        lblImovel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        lblImovel.setTextFill(Color.DARKBLUE);
+
+        Button btnCadastrarImovel = criarBotao("Cadastrar", "#4CAF50");
+        Button btnAtualizarImovel = criarBotao("Atualizar", "#2196F3");
+        Button btnExcluirImovel   = criarBotao("Excluir",   "#f44336");
+
+        btnCadastrarImovel.setOnAction(e -> Trocador.trocarTela("TelaCadastroImovel"));
+        btnAtualizarImovel.setOnAction(e -> Trocador.trocarTela("TelaAtualizarImovel"));
+        btnExcluirImovel.setOnAction(e ->   Trocador.trocarTela("TelaRemoverImovel"));
+
+        HBox hboxImovel = new HBox(20, btnCadastrarImovel, btnAtualizarImovel, btnExcluirImovel);
+        hboxImovel.setAlignment(Pos.CENTER);
+
+        VBox vboxImovel = new VBox(12, lblImovel, hboxImovel);
+        vboxImovel.setAlignment(Pos.CENTER);
+        vboxImovel.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
+
+        root.getChildren().addAll(lblTitulo, vboxCliente, vboxImovel);
+
+        return new Scene(root, 1280, 720);
     }
-	
+
+    // método auxiliar para não repetir estilo de botão
+    private Button criarBotao(String texto, String cor) {
+        Button btn = new Button(texto);
+        btn.setPrefWidth(150);
+        btn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        btn.setStyle("-fx-background-color: " + cor + "; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+        return btn;
+    }
 }

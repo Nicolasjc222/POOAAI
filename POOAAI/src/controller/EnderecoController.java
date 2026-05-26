@@ -22,7 +22,7 @@ public class EnderecoController {
             dao.inserir(endereco);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Imovel salvo com sucesso!");
+            alert.setContentText("Endereço salvo com sucesso!");
             alert.show();
 
         } catch (Exception e) {

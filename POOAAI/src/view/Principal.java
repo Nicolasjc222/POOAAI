@@ -10,7 +10,7 @@ public class Principal extends Application{
     public void start(Stage stage) {
 
         // Configura o Stage (janela)
-        stage.setTitle("Imobiliária xxxx - Login");
+        stage.setTitle("Imobiliária 1234 - Sistema de controle");
         Trocador.setStage(stage);
         Trocador.trocarTela("TelaLogin");
         stage.setResizable(true);

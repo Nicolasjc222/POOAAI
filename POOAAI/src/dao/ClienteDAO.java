@@ -4,50 +4,74 @@ import java.sql.*;
 import java.util.*;
 
 import model.Cliente;
+import model.Endereco;
 
 public class ClienteDAO {
-//
-//    private Connection conn;
-//
-//    public ClienteDAO(Connection conn) {
-//        this.conn = conn;
-//    }
-//
-//    public void inserir(ClienteDAO cliente) throws SQLException {
-//        String sql = "INSERT INTO cliente (titulo_livro, autor_livro, ano_publicacao, "
-//        		+ "num_copias_disponiveis, num_copias_emprestadas) VALUES (?, ?, ?, ?, ?)"; // trocara para cliente
-//
-//        PreparedStatement stmt = conn.prepareStatement(sql);
-//        stmt.setString(1, cliente.getTitulo());
-//        stmt.setString(2, cliente.getAutores());
-//        stmt.setInt(3, cliente.getAno());
-//        stmt.setInt(4, cliente.getCopiasDispon());
-//        stmt.setInt(5, cliente.getCopiasEmprest());
-//
-//        stmt.executeUpdate();
-//        stmt.close();
-//    }
-//
-//    public List<Cliente> listar() throws SQLException {
-//        List<Cliente> lista = new ArrayList<>();
-//        String sql = "SELECT * FROM cliente";
-//
-//        Statement stmt = conn.createStatement();
-//        ResultSet rs = stmt.executeQuery(sql);
-//
-//        while (rs.next()) {
-//        	Cliente cliente = new Cliente();
-//        	cliente.setIdLivro(rs.getInt("id_livro"));
-//        	cliente.setTitulo(rs.getString("titulo_livro"));
-//        	cliente.setAutores(rs.getString("autor_livro"));
-//        	cliente.setAno(rs.getInt("ano_publicacao"));
-//            cliente.setCopiasDispon(rs.getInt("num_copias_disponiveis"));
-//            cliente.setCopiasEmprest(rs.getInt("num_copias_emprestadas"));
-//
-//            lista.add(cliente);
-//        }
-//
-//        return lista;
-//    }
+
+    private Connection conn;
+    private EnderecoDAO enderecoDAO;
+
+    public ClienteDAO(Connection conn) {
+        this.conn = conn;
+    }
+
+    public void inserir(Cliente cliente) throws SQLException {
+        String sql = "INSERT INTO cliente (telefone_cliente, email_cliente, id_endereco, tipo_cliente) VALUES (?, ?, ?, ?)"; // trocara para cliente
+        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        
+        stmt.setInt(1, cliente.getTelefone());
+        stmt.setString(2, cliente.getEmail());
+        stmt.setInt(3, cliente.getEndereco().getIdEndereco());
+        stmt.setString(4, cliente.getTipoCliente());
+
+        stmt.executeUpdate();
+        ResultSet rs = stmt.getGeneratedKeys();
+        if(rs.next()) {
+        	cliente.setIdCliente(rs.getInt(1));
+        }
+        rs.close();
+        stmt.close();
+    }
+
+    public List<Cliente> listar() throws SQLException {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM cliente";
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+        	Cliente cliente = new Cliente();
+        	cliente.setIdCliente(rs.getInt("id_cliente"));
+        	cliente.setTelefone(rs.getInt("telefone_cliente"));
+        	cliente.setEmail(rs.getString("email_cliente"));
+        	cliente.setTipoCliente(rs.getString("tipo_cliente"));
+        	Endereco endereco = enderecoDAO.getEndereco(rs.getInt("id_endereco"));
+        	cliente.setEndereco(endereco);
+            lista.add(cliente);
+        }
+
+        return lista;
+    }
+    
+    public Cliente getCliente(int id) throws SQLException {
+        String sql = "SELECT * FROM cliente WHERE id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+        	Cliente cliente = new Cliente();
+        	cliente.setIdCliente(rs.getInt("id_cliente"));
+        	cliente.setTelefone(rs.getInt("telefone_cliente"));
+        	cliente.setEmail(rs.getString("email_cliente"));
+        	cliente.setTipoCliente(rs.getString("tipo_cliente"));
+        	Endereco endereco = enderecoDAO.getEndereco(rs.getInt("id_endereco"));
+        	cliente.setEndereco(endereco);
+            return cliente;
+        }
+
+        return null;
+    }
 }
 

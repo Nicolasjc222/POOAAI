@@ -2,15 +2,16 @@ package model;
 
 public class Endereco {
 	// rua, bairro, cidade, uf, cep, numero, complemento
+	private int idEndereco; // necessario porque é foreign key
 	private String rua;
 	private String bairro;
 	private String cidade;
 	private String uf;
-	private int cep;
+	private String cep;
 	private int numero;
 	private String complemento;
 	
-	public Endereco(String rua, String bairro, String cidade, String uf, int cep, int numero, String complemento) {
+	public Endereco(String rua, String bairro, String cidade, String uf, String cep, int numero, String complemento) {
 		super();
 		this.rua = rua;
 		this.bairro = bairro;
@@ -28,7 +29,15 @@ public class Endereco {
 	public String getRua() {
 		return rua;
 	}
-
+	
+	public int getIdEndereco() {
+		return idEndereco;
+	}
+	
+	public void setIdEndereco(int idEndereco) {
+		this.idEndereco = idEndereco;
+	}
+	
 	public void setRua(String rua) {
 		this.rua = rua;
 	}
@@ -57,11 +66,11 @@ public class Endereco {
 		this.uf = uf;
 	}
 
-	public int getCep() {
+	public String getCep() {
 		return cep;
 	}
 
-	public void setCep(int cep) {
+	public void setCep(String cep) {
 		this.cep = cep;
 	}
 
