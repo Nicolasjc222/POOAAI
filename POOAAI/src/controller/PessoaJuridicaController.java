@@ -1,9 +1,10 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import model.Conexao;
 import model.PessoaJuridica;
+
+import java.util.List;
+
 import dao.PessoaJuridicaDAO;
 
 public class PessoaJuridicaController {
@@ -14,21 +15,53 @@ public class PessoaJuridicaController {
 		this.pessoaJuridica = pessoaJuridica;
 	}
 	
-    @FXML
     public void salvarPessoaJuridica() {
         try {
-        	Conexao.conectar(); // sua classe de conexão
+        	Conexao.conectar();
             dao = new PessoaJuridicaDAO(Conexao.conexao);
             dao.inserir(pessoaJuridica);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Pessoa jurídica salva com sucesso!");
-            alert.show();
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         	Conexao.desconectar();
+        }
+    }
+    public void atualizarPessoaJuridica() {
+        try {
+        	Conexao.conectar();
+            dao = new PessoaJuridicaDAO(Conexao.conexao);
+            dao.atualizar(pessoaJuridica);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        	Conexao.desconectar();
+        }
+    }
+    public PessoaJuridica procurarPessoaJuridica() {
+        try {
+            Conexao.conectar();
+            dao = new PessoaJuridicaDAO(Conexao.conexao);
+            return dao.getPessoaJuridica(pessoaJuridica.getIdCliente());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
+        }
+    }
+
+    public List<PessoaJuridica> listarPessoaJuridica() {
+        try {
+            Conexao.conectar();
+            dao = new PessoaJuridicaDAO(Conexao.conexao);
+            return dao.listar();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
         }
     }
 }

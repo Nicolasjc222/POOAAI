@@ -1,34 +1,78 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import model.Conexao;
 import model.Endereco;
+
+import java.util.*;
+
 import dao.EnderecoDAO;
 
 public class EnderecoController {
-    private EnderecoDAO dao;
+	private EnderecoDAO dao;
 	private Endereco endereco;
-	
+
 	public EnderecoController(Endereco endereco) {
 		this.endereco = endereco;
 	}
-	
-    @FXML
-    public void salvarEndereco() {
+
+	public void salvarEndereco() {
+		try {
+			Conexao.conectar();
+			dao = new EnderecoDAO(Conexao.conexao);
+			dao.inserir(endereco);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			Conexao.desconectar();
+		}
+	}
+
+	public void deletarEndereco() {
+		try {
+			Conexao.conectar();
+			dao = new EnderecoDAO(Conexao.conexao);
+			dao.deletar(endereco.getIdEndereco());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			Conexao.desconectar();
+		}
+	}
+
+	public void atualizarEndereco() {
+		try {
+			Conexao.conectar();
+			dao = new EnderecoDAO(Conexao.conexao);
+			dao.atualizar(endereco);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			Conexao.desconectar();
+		}
+	}
+	public Endereco procurarEndereco() {
         try {
-        	Conexao.conectar(); // sua classe de conexão
+            Conexao.conectar();
             dao = new EnderecoDAO(Conexao.conexao);
-            dao.inserir(endereco);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Endereço salvo com sucesso!");
-            alert.show();
-
+            return dao.getEndereco(endereco.getIdEndereco());
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         } finally {
-        	Conexao.desconectar();
+            Conexao.desconectar();
+        }
+    }
+
+    public List<Endereco> listarEnderecos() {
+        try {
+            Conexao.conectar();
+            dao = new EnderecoDAO(Conexao.conexao);
+            return dao.listar();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
         }
     }
 }

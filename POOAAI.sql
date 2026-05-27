@@ -1,8 +1,8 @@
-truncate table imovel
 truncate table pf
 truncate table pj
 truncate table cliente
 truncate table endereco
+truncate table imovel
 drop table endereco
 drop table imovel
 drop table cliente
@@ -60,7 +60,7 @@ CREATE TABLE pf
 	id_cliente smallint NOT NULL,
 	CONSTRAINT pk_id_pf PRIMARY KEY (id_pf),
 	CONSTRAINT uk_cpf_cliente UNIQUE(cpf_cliente),
-	CONSTRAINT fk_pf_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+	CONSTRAINT fk_pf_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE,
 	CONSTRAINT ck_cpf_cliente CHECK (LEN(cpf_cliente) = 11)
 )
 
@@ -72,7 +72,7 @@ CREATE TABLE pj
 	razao_social varchar(200) NOT NULL,
 	CONSTRAINT pk_id_pj PRIMARY KEY (id_pj),
 	CONSTRAINT uk_cnpj UNIQUE(cnpj_cliente),
-	CONSTRAINT fk_pj_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+	CONSTRAINT fk_pj_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE,
 	CONSTRAINT ck_cnpj_cliente CHECK (LEN(cnpj_cliente) = 14)
 )
 

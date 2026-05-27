@@ -144,12 +144,20 @@ public class TelaCadastroCliente {
         btnLimpar.setOnAction(e -> {
         limparCampos();
         });
+        
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setPrefWidth(150);
+        btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+        btnVoltar.setOnAction(e -> {
+        Trocador.voltarTela();
+        });
 
         lblErro = new Label();
         lblErro.setTextFill(Color.RED);
         lblErro.setFont(Font.font(12));
 
-        root.getChildren().addAll(lblTitulo, vboxEndereco, vboxCliente, btnSalvar, btnLimpar, lblErro);
+        root.getChildren().addAll(lblTitulo, vboxEndereco, vboxCliente, btnSalvar, btnLimpar, btnVoltar, lblErro);
 
         return new Scene(root, 800, 600);
     }
@@ -209,7 +217,7 @@ public class TelaCadastroCliente {
             cliente.setTipoCliente(cbTipo.getValue());
             cliente.setEndereco(endereco);
             clienteCtrl = new ClienteController(cliente);
-            clienteCtrl.salvarCliente(); // idCliente é gerado aqui
+            clienteCtrl.salvarCliente();
 
             // 3. salva PF ou PJ com o idCliente gerado
             if (cbTipo.getValue().equals("PF")) {

@@ -1,8 +1,7 @@
 package controller;
 
+import java.util.*;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import model.Conexao;
 import model.Imovel;
 import dao.ImovelDAO;
@@ -15,21 +14,65 @@ public class ImovelController {
 		this.imovel = imovel;
 	}
 	
-    @FXML
     public void salvarImovel() {
         try {
-        	Conexao.conectar(); // sua classe de conexão
+        	Conexao.conectar();
             dao = new ImovelDAO(Conexao.conexao);
             dao.inserir(imovel);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Imovel salvo com sucesso!");
-            alert.show();
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         	Conexao.desconectar();
+        }
+    }
+    public void deletarImovel() {
+    	 try {
+         	Conexao.conectar();
+             dao = new ImovelDAO(Conexao.conexao);
+             dao.deletar(imovel.getIdImovel());
+
+         } catch (Exception e) {
+             e.printStackTrace();
+         } finally {
+         	Conexao.desconectar();
+         }
+    }
+    public void atualizarImovel() {
+    	try {
+         	Conexao.conectar();
+             dao = new ImovelDAO(Conexao.conexao);
+             dao.atualizar(imovel);
+
+         } catch (Exception e) {
+             e.printStackTrace();
+         } finally {
+         	Conexao.desconectar();
+         }
+    }
+    
+    public Imovel procurarImovel() {
+        try {
+            Conexao.conectar();
+            dao = new ImovelDAO(Conexao.conexao);
+            return dao.getImovel(imovel.getIdImovel());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
+        }
+    }
+
+    public List<Imovel> listarImoveis() {
+        try {
+            Conexao.conectar();
+            dao = new ImovelDAO(Conexao.conexao);
+            return dao.listar();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
         }
     }
 }

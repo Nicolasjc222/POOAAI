@@ -46,5 +46,36 @@ public class PessoaFisicaDAO {
         return lista;
     }
     
+    public PessoaFisica getPessoaFisica(int id) throws SQLException {
+        String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente WHERE pf.id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+        	PessoaFisica pessoaFisica = new PessoaFisica();
+        	
+        	pessoaFisica.setCpf(rs.getString("cpf_cliente"));
+        	pessoaFisica.setNome(rs.getString("nome"));
+        	
+        	pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
+        	pessoaFisica.setTelefone(rs.getInt("telefone_cliente"));
+        	pessoaFisica.setEmail(rs.getString("email_cliente"));
+            return pessoaFisica;
+        }
+
+        return null;
+    }
+    
+    public void atualizar(PessoaFisica pessoaFisica) throws SQLException {
+        String sql = "UPDATE pf SET cpf_cliente = ?, nome = ? WHERE id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, pessoaFisica.getCpf());
+        stmt.setString(2, pessoaFisica.getNome());
+        stmt.setInt(3, pessoaFisica.getIdCliente());
+        stmt.executeUpdate();
+        stmt.close();
+    }
+    
 }
 

@@ -51,7 +51,7 @@ public class TelaMenu {
         Button btnCadastrarImovel = criarBotao("Cadastrar", "#4CAF50");
         Button btnAtualizarImovel = criarBotao("Atualizar", "#2196F3");
         Button btnExcluirImovel   = criarBotao("Excluir",   "#f44336");
-
+        
         btnCadastrarImovel.setOnAction(e -> Trocador.trocarTela("TelaCadastroImovel"));
         btnAtualizarImovel.setOnAction(e -> Trocador.trocarTela("TelaAtualizarImovel"));
         btnExcluirImovel.setOnAction(e ->   Trocador.trocarTela("TelaRemoverImovel"));
@@ -62,8 +62,13 @@ public class TelaMenu {
         VBox vboxImovel = new VBox(12, lblImovel, hboxImovel);
         vboxImovel.setAlignment(Pos.CENTER);
         vboxImovel.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;");
-
-        root.getChildren().addAll(lblTitulo, vboxCliente, vboxImovel);
+        
+        Button btnVoltar = criarBotao("Voltar", "#0c27f0");
+        btnVoltar.setOnAction(e -> {
+        Trocador.voltarTela();
+        });
+        
+        root.getChildren().addAll(lblTitulo, vboxCliente, vboxImovel, btnVoltar);
 
         return new Scene(root, 1280, 720);
     }

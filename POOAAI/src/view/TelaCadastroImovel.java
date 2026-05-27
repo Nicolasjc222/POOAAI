@@ -106,11 +106,19 @@ public class TelaCadastroImovel {
         limparCampos();
         });
         
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setPrefWidth(150);
+        btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+        btnVoltar.setOnAction(e -> {
+        Trocador.voltarTela();
+        });
+        
         lblErro = new Label();
         lblErro.setTextFill(Color.RED);
         lblErro.setFont(Font.font(12));
 
-        root.getChildren().addAll(lblTitulo, vboxEndereco, vboxImovel, btnSalvar, btnLimpar, lblErro);
+        root.getChildren().addAll(lblTitulo, vboxEndereco, vboxImovel, btnSalvar, btnLimpar, btnVoltar, lblErro);
 
         return new Scene(root, 800, 600);
     }

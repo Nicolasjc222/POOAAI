@@ -77,4 +77,27 @@ public class EnderecoDAO {
 
         return null;
     }
+    
+    public void atualizar(Endereco endereco) throws SQLException {
+        String sql = "UPDATE endereco SET rua_endereco = ?, bairro_endereco = ?, cidade_endereco = ?, UF_endereco = ?, CEP_endereco = ?, numero_endereco = ?, complemento_endereco = ? WHERE id_endereco = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, endereco.getRua());
+        stmt.setString(2, endereco.getBairro());
+        stmt.setString(3, endereco.getCidade());
+        stmt.setString(4, endereco.getUf());
+        stmt.setString(5, endereco.getCep());
+        stmt.setInt(6, endereco.getNumero());
+        stmt.setString(7, endereco.getComplemento());
+        stmt.setInt(8, endereco.getIdEndereco());
+        stmt.executeUpdate();
+        stmt.close();
+    }
+    
+    public void deletar(int id) throws SQLException {
+    	String sql = "DELETE FROM endereco WHERE id_endereco = ?";
+    	PreparedStatement stmt = conn.prepareStatement(sql);
+    	stmt.setInt(1, id);
+    	stmt.executeUpdate();
+    	stmt.close();
+    }
 }

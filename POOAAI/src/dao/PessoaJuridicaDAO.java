@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 
+
 import model.PessoaJuridica;
 
 public class PessoaJuridicaDAO {
@@ -44,6 +45,37 @@ public class PessoaJuridicaDAO {
         }
 
         return lista;
+    }
+    
+    public PessoaJuridica getPessoaJuridica(int id) throws SQLException {
+        String sql = "SELECT c.*, pj.* FROM pj JOIN cliente c ON pj.id_cliente = c.id_cliente WHERE pj.id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+        	PessoaJuridica pessoaJuridica = new PessoaJuridica();
+        	
+        	pessoaJuridica.setCnpj(rs.getString("cnpj_cliente"));
+        	pessoaJuridica.setRazaoSocial(rs.getString("razao_social"));
+        	
+        	pessoaJuridica.setIdCliente(rs.getInt("id_cliente"));
+        	pessoaJuridica.setTelefone(rs.getInt("telefone_cliente"));
+        	pessoaJuridica.setEmail(rs.getString("email_cliente"));
+            return pessoaJuridica;
+        }
+
+        return null;
+    }
+    
+    public void atualizar(PessoaJuridica pessoaJuridica) throws SQLException {
+        String sql = "UPDATE pj SET cnpj_cliente = ?, razao_social = ? WHERE id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, pessoaJuridica.getCnpj());
+        stmt.setString(2, pessoaJuridica.getRazaoSocial());
+        stmt.setInt(3, pessoaJuridica.getIdCliente());
+        stmt.executeUpdate();
+        stmt.close();
     }
     
 }

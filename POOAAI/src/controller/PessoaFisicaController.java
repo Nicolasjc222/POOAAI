@@ -1,9 +1,10 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import model.Conexao;
 import model.PessoaFisica;
+
+import java.util.List;
+
 import dao.PessoaFisicaDAO;
 
 public class PessoaFisicaController {
@@ -14,21 +15,53 @@ public class PessoaFisicaController {
 		this.pessoaFisica = pessoaFisica;
 	}
 	
-    @FXML
     public void salvarPessoaFisica() {
         try {
-        	Conexao.conectar(); // sua classe de conexão
+        	Conexao.conectar();
             dao = new PessoaFisicaDAO(Conexao.conexao);
             dao.inserir(pessoaFisica);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Pessoa física salva com sucesso!");
-            alert.show();
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         	Conexao.desconectar();
+        }
+    }
+    public void atualizarPessoaFisica() {
+        try {
+        	Conexao.conectar();
+            dao = new PessoaFisicaDAO(Conexao.conexao);
+            dao.atualizar(pessoaFisica);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        	Conexao.desconectar();
+        }
+    }
+    public PessoaFisica procurarPessoaFisica() {
+        try {
+            Conexao.conectar();
+            dao = new PessoaFisicaDAO(Conexao.conexao);
+            return dao.getPessoaFisica(pessoaFisica.getIdCliente());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
+        }
+    }
+
+    public List<PessoaFisica> listarPessoaFisica() {
+        try {
+            Conexao.conectar();
+            dao = new PessoaFisicaDAO(Conexao.conexao);
+            return dao.listar();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Conexao.desconectar();
         }
     }
 }

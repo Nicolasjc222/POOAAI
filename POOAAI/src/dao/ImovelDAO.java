@@ -50,5 +50,47 @@ public class ImovelDAO {
 
         return lista;
     }
+    
+    public Imovel getImovel(int id) throws SQLException {
+        String sql = "SELECT * FROM imovel WHERE id_imovel = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+        	Imovel imovel = new Imovel();
+        	imovel.setIdImovel(rs.getInt("id_imovel"));
+        	imovel.setTipoPropriedade(rs.getString("tipo_imovel"));
+        	imovel.setArea(rs.getInt("area_imovel"));
+        	imovel.setValor(rs.getInt("valor_imovel"));
+        	imovel.setComodos(rs.getInt("comodos_imovel"));
+        	Endereco endereco = enderecoDAO.getEndereco(rs.getInt("id_endereco"));
+        	imovel.setEndereco(endereco);
+            return imovel;
+        }
+
+        return null;
+    }
+    
+    public void atualizar(Imovel imovel) throws SQLException {
+        String sql = "UPDATE imovel SET tipo_imovel = ?, area_imovel = ?, valor_imovel = ?, comodos_imovel = ?, id_endereco = ? WHERE id_imovel = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, imovel.getTipoPropriedade());
+        stmt.setInt(2, imovel.getArea());
+        stmt.setInt(3, imovel.getValor());
+        stmt.setInt(4, imovel.getComodos());
+        stmt.setInt(5, imovel.getEndereco().getIdEndereco());
+        stmt.setInt(6, imovel.getIdImovel());
+        stmt.executeUpdate();
+        stmt.close();
+    }
+    
+    public void deletar(int id) throws SQLException {
+    	String sql = "DELETE FROM imovel WHERE id_imovel = ?";
+    	PreparedStatement stmt = conn.prepareStatement(sql);
+    	stmt.setInt(1, id);
+    	stmt.executeUpdate();
+    	stmt.close();
+    }
 }
 

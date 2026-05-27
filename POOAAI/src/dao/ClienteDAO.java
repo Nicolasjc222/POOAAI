@@ -73,5 +73,24 @@ public class ClienteDAO {
 
         return null;
     }
+    
+    public void atualizar(Cliente cliente) throws SQLException {
+        String sql = "UPDATE cliente SET telefone_cliente = ?, email_cliente = ?, id_endereco = ? WHERE id_cliente = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, cliente.getTelefone());
+        stmt.setString(2, cliente.getEmail());
+        stmt.setInt(3, cliente.getEndereco().getIdEndereco());
+        stmt.setInt(4, cliente.getIdCliente());
+        stmt.executeUpdate();
+        stmt.close();
+    }
+    
+    public void deletar(int id) throws SQLException {
+    	String sql = "DELETE FROM cliente WHERE id_cliente = ?";
+    	PreparedStatement stmt = conn.prepareStatement(sql);
+    	stmt.setInt(1, id);
+    	stmt.executeUpdate();
+    	stmt.close();
+    }
 }
 
