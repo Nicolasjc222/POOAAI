@@ -20,7 +20,6 @@ CREATE TABLE endereco
 	numero_endereco int NOT NULL,
 	complemento_endereco varchar(100) NULL,
 	CONSTRAINT pk_id_endereco PRIMARY KEY (id_endereco),
-	CONSTRAINT uk_CEP_endereco UNIQUE (CEP_endereco),
 	CONSTRAINT ck_UF_endereco CHECK (LEN(UF_endereco)=2),
 	CONSTRAINT ck_CEP_endereco CHECK (LEN(CEP_endereco)=8)
 )
