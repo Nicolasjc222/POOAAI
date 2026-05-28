@@ -43,7 +43,7 @@ CREATE TABLE imovel
 CREATE TABLE cliente
 (
 	id_cliente smallint NOT NULL IDENTITY(1,1),
-	telefone_cliente int NOT NULL,
+	telefone_cliente varchar(20) NOT NULL,
 	email_cliente varchar(100) NOT NULL,
 	id_endereco smallint NOT NULL,
 	tipo_cliente varchar(2) NOT NULL,
@@ -81,3 +81,5 @@ SELECT * FROM endereco
 SELECT * FROM cliente
 SELECT * FROM pf
 SELECT * FROM pj
+
+UPDATE endereco SET rua_endereco = 'zxczxc', bairro_endereco = 'xcacax', cidade_endereco = 'zxccas', UF_endereco = 'az', CEP_endereco = 12345678, numero_endereco = 1234, complemento_endereco = 1234 WHERE id_endereco = null

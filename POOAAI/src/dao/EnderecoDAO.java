@@ -5,7 +5,7 @@ import java.util.*;
 
 import model.Endereco;
 
-public class EnderecoDAO {
+public class EnderecoDAO implements ICrudDAO<Endereco> {
 
     private Connection conn;
     
@@ -56,7 +56,7 @@ public class EnderecoDAO {
         return lista;
     }
     
-    public Endereco getEndereco(int id) throws SQLException {
+    public Endereco buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM endereco WHERE id_endereco = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);

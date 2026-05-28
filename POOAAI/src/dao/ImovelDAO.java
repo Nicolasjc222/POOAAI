@@ -6,7 +6,7 @@ import java.util.*;
 import model.Imovel;
 import model.Endereco;
 
-public class ImovelDAO {
+public class ImovelDAO implements ICrudDAO<Imovel>{
 
     private Connection conn;
     private EnderecoDAO enderecoDAO;
@@ -42,7 +42,8 @@ public class ImovelDAO {
         	imovel.setArea(rs.getInt("area_imovel"));
         	imovel.setValor(rs.getInt("valor_imovel"));
         	imovel.setComodos(rs.getInt("comodos_imovel"));
-        	Endereco endereco = enderecoDAO.getEndereco(rs.getInt("id_endereco"));
+        	enderecoDAO = new EnderecoDAO(conn);
+        	Endereco endereco = enderecoDAO.buscarPorId(rs.getInt("id_endereco"));
         	imovel.setEndereco(endereco);
 
             lista.add(imovel);
@@ -51,7 +52,7 @@ public class ImovelDAO {
         return lista;
     }
     
-    public Imovel getImovel(int id) throws SQLException {
+    public Imovel buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM imovel WHERE id_imovel = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -64,7 +65,8 @@ public class ImovelDAO {
         	imovel.setArea(rs.getInt("area_imovel"));
         	imovel.setValor(rs.getInt("valor_imovel"));
         	imovel.setComodos(rs.getInt("comodos_imovel"));
-        	Endereco endereco = enderecoDAO.getEndereco(rs.getInt("id_endereco"));
+        	enderecoDAO = new EnderecoDAO(conn);
+        	Endereco endereco = enderecoDAO.buscarPorId(rs.getInt("id_endereco"));
         	imovel.setEndereco(endereco);
             return imovel;
         }

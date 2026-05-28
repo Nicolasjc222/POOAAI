@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import model.Cliente;
+import model.PessoaFisica;
+import model.PessoaJuridica;
 
 public class TelaRemoverCliente {
 
@@ -54,11 +56,31 @@ public class TelaRemoverCliente {
 		btnRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 		btnRemover.setStyle("-fx-background-color: #e61515; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
 		btnRemover.setOnAction(e -> {
-			try {
-				handleRemover();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			Label lblAceitarNegar = new Label("Aceita a remoção?");
+			lblAceitarNegar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			Button aceitarRemover = new Button("Sim");
+			Button negarRemover = new Button("Não");
+			aceitarRemover.setPrefWidth(150);
+			aceitarRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			aceitarRemover.setStyle("-fx-background-color: #e61515; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+			negarRemover.setPrefWidth(150);
+			negarRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			negarRemover.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+			negarRemover.setOnAction(e1 -> {
+				root.getChildren().clear();
+				root.getChildren().addAll(lblTitulo, vboxIdCliente, btnRemover, btnVoltar, lblErro);
+			});
+			aceitarRemover.setOnAction(e2 -> {
+				try {
+					handleRemover();
+					root.getChildren().clear();
+					root.getChildren().addAll(lblTitulo, vboxIdCliente, btnRemover, btnVoltar, lblErro);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			});
+			root.getChildren().clear();
+			root.getChildren().addAll(lblTitulo, lblAceitarNegar, aceitarRemover, negarRemover, lblErro);
 		});
 
 		lblErro = new Label();
@@ -73,7 +95,13 @@ public class TelaRemoverCliente {
 		if (verificarId()) {
 
 			// remove cliente
-			Cliente cliente = new Cliente();
+			String tipo = clienteProcurado.getTipoCliente();
+        	Cliente cliente;
+        	if(tipo.equals("PF")) {
+        	cliente = new PessoaFisica();
+        	} else {
+        		cliente = new PessoaJuridica();
+        	}
 			cliente.setIdCliente(clienteProcurado.getIdCliente());
 			clienteCtrl = new ClienteController(cliente);
 			clienteCtrl.deletarCliente();
@@ -95,7 +123,13 @@ public class TelaRemoverCliente {
 		boolean idOk;
 		try {
 			int idCliente = Integer.parseInt(tfIdCliente.getText().trim());
-			Cliente cliente = new Cliente();
+			String tipo = clienteProcurado.getTipoCliente();
+        	Cliente cliente;
+        	if(tipo.equals("PF")) {
+        	cliente = new PessoaFisica();
+        	} else {
+        		cliente = new PessoaJuridica();
+        	}
 			cliente.setIdCliente(idCliente);
 			clienteCtrl = new ClienteController(cliente);
 			clienteProcurado = clienteCtrl.procurarCliente();

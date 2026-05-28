@@ -1,13 +1,13 @@
 package model;
 
-public class Cliente {
+public abstract class Cliente {
 	private int idCliente; // necessario porque é foreign key
-	private int telefone;
+	private String telefone;
 	private	String email;
 	private	Endereco endereco = new Endereco();
 	private String tipoCliente;
 	
-	public Cliente(int idCliente, int telefone, String email, Endereco endereco, String tipoCliente) {
+	public Cliente(int idCliente, String telefone, String email, Endereco endereco, String tipoCliente) {
 		super();
 		this.idCliente = idCliente;
 		this.telefone = telefone;
@@ -34,10 +34,10 @@ public class Cliente {
 	public void setIdCliente(int idCliente) {
 		this.idCliente = idCliente;
 	}
-	public int getTelefone() {
+	public String getTelefone() {
 		return telefone;
 	}
-	public void setTelefone(int telefone) {
+	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
 	public String getEmail() {

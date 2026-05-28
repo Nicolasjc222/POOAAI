@@ -5,7 +5,7 @@ import java.util.*;
 
 import model.PessoaFisica;
 
-public class PessoaFisicaDAO {
+public class PessoaFisicaDAO implements ICrudDAO<PessoaFisica> {
 
     private Connection conn;
 
@@ -38,7 +38,7 @@ public class PessoaFisicaDAO {
         	pessoaFisica.setNome(rs.getString("nome"));
         	
         	pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
-        	pessoaFisica.setTelefone(rs.getInt("telefone_cliente"));
+        	pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
         	pessoaFisica.setEmail(rs.getString("email_cliente"));
             lista.add(pessoaFisica);
         }
@@ -46,7 +46,7 @@ public class PessoaFisicaDAO {
         return lista;
     }
     
-    public PessoaFisica getPessoaFisica(int id) throws SQLException {
+    public PessoaFisica buscarPorId(int id) throws SQLException {
         String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente WHERE pf.id_cliente = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -59,7 +59,7 @@ public class PessoaFisicaDAO {
         	pessoaFisica.setNome(rs.getString("nome"));
         	
         	pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
-        	pessoaFisica.setTelefone(rs.getInt("telefone_cliente"));
+        	pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
         	pessoaFisica.setEmail(rs.getString("email_cliente"));
             return pessoaFisica;
         }
@@ -76,6 +76,10 @@ public class PessoaFisicaDAO {
         stmt.executeUpdate();
         stmt.close();
     }
+
+	public void deletar(int id) throws SQLException {
+		// not used
+	}
     
 }
 

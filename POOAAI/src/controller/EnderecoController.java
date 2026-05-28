@@ -54,7 +54,7 @@ public class EnderecoController {
         try {
             Conexao.conectar();
             dao = new EnderecoDAO(Conexao.conexao);
-            return dao.getEndereco(endereco.getIdEndereco());
+            return dao.buscarPorId(endereco.getIdEndereco());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

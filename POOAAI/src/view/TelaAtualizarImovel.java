@@ -182,10 +182,12 @@ public class TelaAtualizarImovel {
 					tfCidade.getText().trim(), tfUF.getText().trim(),
 					tfCep.getText().trim(), numero, tfComplemento.getText().trim()
 					);
+			endereco.setIdEndereco(imovelProcurado.getEndereco().getIdEndereco());
 			enderecoCtrl = new EnderecoController(endereco);
 			enderecoCtrl.atualizarEndereco();
 
 			Imovel imovel = new Imovel(endereco, tfTipoPropriedade.getText().trim(), area, valor, comodos);
+			imovel.setIdImovel(imovelProcurado.getIdImovel());
 			imovelCtrl = new ImovelController(imovel);
 			imovelCtrl.atualizarImovel();
 

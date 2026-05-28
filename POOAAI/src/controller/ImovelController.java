@@ -54,7 +54,7 @@ public class ImovelController {
         try {
             Conexao.conectar();
             dao = new ImovelDAO(Conexao.conexao);
-            return dao.getImovel(imovel.getIdImovel());
+            return dao.buscarPorId(imovel.getIdImovel());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

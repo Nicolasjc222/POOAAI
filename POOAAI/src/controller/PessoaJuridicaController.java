@@ -43,7 +43,7 @@ public class PessoaJuridicaController {
         try {
             Conexao.conectar();
             dao = new PessoaJuridicaDAO(Conexao.conexao);
-            return dao.getPessoaJuridica(pessoaJuridica.getIdCliente());
+            return dao.buscarPorId(pessoaJuridica.getIdCliente());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

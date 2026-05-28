@@ -54,11 +54,31 @@ public class TelaRemoverImovel {
 		btnRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 		btnRemover.setStyle("-fx-background-color: #e61515; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
 		btnRemover.setOnAction(e -> {
-			try {
-				handleRemover();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			Label lblAceitarNegar = new Label("Aceita a remoção?");
+			lblAceitarNegar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			Button aceitarRemover = new Button("Sim");
+			Button negarRemover = new Button("Não");
+			aceitarRemover.setPrefWidth(150);
+			aceitarRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			aceitarRemover.setStyle("-fx-background-color: #e61515; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+			negarRemover.setPrefWidth(150);
+			negarRemover.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+			negarRemover.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+			negarRemover.setOnAction(e1 -> {
+				root.getChildren().clear();
+				root.getChildren().addAll(lblTitulo, vboxIdImovel, btnRemover, btnVoltar, lblErro);
+			});
+			aceitarRemover.setOnAction(e2 -> {
+				try {
+					handleRemover();
+					root.getChildren().clear();
+					root.getChildren().addAll(lblTitulo, vboxIdImovel, btnRemover, btnVoltar, lblErro);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			});
+			root.getChildren().clear();
+			root.getChildren().addAll(lblTitulo, lblAceitarNegar, aceitarRemover, negarRemover, lblErro);
 		});
 
 		lblErro = new Label();

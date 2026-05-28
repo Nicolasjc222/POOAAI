@@ -166,8 +166,13 @@ public class TelaCadastroCliente {
         boolean telefoneOk;
         boolean numeroOk;
 
-        try { Integer.parseInt(tfTelefone.getText().trim()); telefoneOk = true; }
-        catch (NumberFormatException e) { telefoneOk = false; }
+        try {
+			Long.parseLong(tfTelefone.getText().trim());
+			if(tfTelefone.getText().trim().length() > 9) {
+				telefoneOk = true;
+			} else { telefoneOk = false; }
+        }
+		catch (NumberFormatException e) { telefoneOk = false; }
 
 
         try { Integer.parseInt(tfNumero.getText().trim()); numeroOk = true; }
@@ -199,8 +204,7 @@ public class TelaCadastroCliente {
         lblErro.setText("");
         if (validarCampos()) {
             int numero   = Integer.parseInt(tfNumero.getText().trim());
-            int telefone = Integer.parseInt(tfTelefone.getText().trim());
-
+            
             // 1. salva endereço
             Endereco endereco = new Endereco(
                 tfRua.getText().trim(), tfBairro.getText().trim(),
@@ -211,8 +215,14 @@ public class TelaCadastroCliente {
             enderecoCtrl.salvarEndereco();
 
             // 2. salva cliente
-            Cliente cliente = new Cliente();
-            cliente.setTelefone(telefone);
+            String tipo = cbTipo.getValue();
+        	Cliente cliente;
+        	if(tipo.equals("PF")) {
+        	cliente = new PessoaFisica();
+        	} else {
+        		cliente = new PessoaJuridica();
+        	}
+            cliente.setTelefone(tfTelefone.getText().trim());
             cliente.setEmail(tfEmail.getText().trim());
             cliente.setTipoCliente(cbTipo.getValue());
             cliente.setEndereco(endereco);

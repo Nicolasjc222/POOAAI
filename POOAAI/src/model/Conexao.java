@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-public class Conexao {
+public final class Conexao {
 	private static String server = "jdbc:sqlserver://10.109.8.9:1433;";
 	private static String banco = "databaseName=POO_gp08;";
 	private static String usuario = "user=POO_gp08;password=;encrypt=false;trustServerCertificate=true;loginTimeout=30;";

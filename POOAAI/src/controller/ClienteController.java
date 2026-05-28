@@ -53,7 +53,7 @@ public class ClienteController {
         try {
             Conexao.conectar();
             dao = new ClienteDAO(Conexao.conexao);
-            return dao.getCliente(cliente.getIdCliente());
+            return dao.buscarPorId(cliente.getIdCliente());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -51,15 +51,15 @@ public class TelaAtualizarCliente {
 		Label lblTitulo = new Label("Atualizar cliente");
 		lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
 		lblTitulo.setTextFill(Color.DARKBLUE);
-		
+
 		Button btnVoltar = new Button("Voltar");
-        btnVoltar.setPrefWidth(150);
-        btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-        btnVoltar.setOnAction(e -> {
-        Trocador.voltarTela();
-        });
-        
+		btnVoltar.setPrefWidth(150);
+		btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+		btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
+		btnVoltar.setOnAction(e -> {
+			Trocador.voltarTela();
+		});
+
 		Label lblIdCliente = new Label("ID Cliente:");
 		lblIdCliente.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
@@ -118,28 +118,27 @@ public class TelaAtualizarCliente {
 				vboxTipoExtra = new VBox(10);
 				vboxTipoExtra.setAlignment(Pos.CENTER_LEFT);
 
-				cbTipo.setOnAction(er -> {
-					vboxTipoExtra.getChildren().clear();
 
-					GridPane gridTipo = new GridPane();
-					gridTipo.setHgap(10);
-					gridTipo.setVgap(12);
-					gridTipo.setAlignment(Pos.CENTER_LEFT);
+				vboxTipoExtra.getChildren().clear();
 
-					if (cbTipo.getValue().equals("PF")) {
-						tfNome = new TextField(); tfNome.setPromptText("Nome completo"); tfNome.setText(pessoaFisicaProcurada.getNome());
-						tfCpf  = new TextField(); tfCpf.setPromptText("000.000.000-00"); tfCpf.setText(pessoaFisicaProcurada.getCpf());
-						gridTipo.add(new Label("Nome:"), 0, 0); gridTipo.add(tfNome, 1, 0);
-						gridTipo.add(new Label("CPF:"),  0, 1); gridTipo.add(tfCpf,  1, 1);
-					} else {
-						tfRazaoSocial = new TextField(); tfRazaoSocial.setPromptText("Razão Social"); tfRazaoSocial.setText(pessoaJuridicaProcurada.getRazaoSocial());
-						tfCnpj        = new TextField(); tfCnpj.setPromptText("00.000.000/0000-00"); tfCnpj.setText(pessoaJuridicaProcurada.getCnpj());
-						gridTipo.add(new Label("Razão Social:"), 0, 0); gridTipo.add(tfRazaoSocial, 1, 0);
-						gridTipo.add(new Label("CNPJ:"),         0, 1); gridTipo.add(tfCnpj,        1, 1);
-					}
+				GridPane gridTipo = new GridPane();
+				gridTipo.setHgap(10);
+				gridTipo.setVgap(12);
+				gridTipo.setAlignment(Pos.CENTER_LEFT);
 
-					vboxTipoExtra.getChildren().add(gridTipo);
-				});
+				if (cbTipo.getValue().equals("PF")) {
+					tfNome = new TextField(); tfNome.setPromptText("Nome completo"); tfNome.setText(pessoaFisicaProcurada.getNome());
+					tfCpf  = new TextField(); tfCpf.setPromptText("000.000.000-00"); tfCpf.setText(pessoaFisicaProcurada.getCpf());
+					gridTipo.add(new Label("Nome:"), 0, 0); gridTipo.add(tfNome, 1, 0);
+					gridTipo.add(new Label("CPF:"),  0, 1); gridTipo.add(tfCpf,  1, 1);
+				} else {
+					tfRazaoSocial = new TextField(); tfRazaoSocial.setPromptText("Razão Social"); tfRazaoSocial.setText(pessoaJuridicaProcurada.getRazaoSocial());
+					tfCnpj        = new TextField(); tfCnpj.setPromptText("00.000.000/0000-00"); tfCnpj.setText(pessoaJuridicaProcurada.getCnpj());
+					gridTipo.add(new Label("Razão Social:"), 0, 0); gridTipo.add(tfRazaoSocial, 1, 0);
+					gridTipo.add(new Label("CNPJ:"),         0, 1); gridTipo.add(tfCnpj,        1, 1);
+				}
+
+				vboxTipoExtra.getChildren().add(gridTipo);
 
 				GridPane gridCliente = new GridPane();
 				gridCliente.setHgap(10);
@@ -180,7 +179,7 @@ public class TelaAtualizarCliente {
 				root.getChildren().addAll(lblTitulo, vboxIdCliente, btnVerificarId, vboxEndereco, vboxCliente, btnSalvar, btnLimpar, btnVoltar, lblErro);
 			}   
 		});
-        
+
 		lblErro = new Label();
 		lblErro.setTextFill(Color.RED);
 		lblErro.setFont(Font.font(12));
@@ -192,7 +191,12 @@ public class TelaAtualizarCliente {
 		boolean telefoneOk;
 		boolean numeroOk;
 
-		try { Integer.parseInt(tfTelefone.getText().trim()); telefoneOk = true; }
+		try {
+			Long.parseLong(tfTelefone.getText().trim());
+			if(tfTelefone.getText().trim().length() > 9) {
+			telefoneOk = true;
+			} else { telefoneOk = false; }
+        }
 		catch (NumberFormatException e) { telefoneOk = false; }
 
 
@@ -225,7 +229,6 @@ public class TelaAtualizarCliente {
 		lblErro.setText("");
 		if (validarCampos()) {
 			int numero   = Integer.parseInt(tfNumero.getText().trim());
-			int telefone = Integer.parseInt(tfTelefone.getText().trim());
 
 			// 1. salva endereço
 			Endereco endereco = new Endereco(
@@ -233,15 +236,23 @@ public class TelaAtualizarCliente {
 					tfCidade.getText().trim(), tfUF.getText().trim(),
 					tfCep.getText().trim(), numero, tfComplemento.getText().trim()
 					);
+			endereco.setIdEndereco(clienteProcurado.getEndereco().getIdEndereco());
 			enderecoCtrl = new EnderecoController(endereco);
 			enderecoCtrl.atualizarEndereco();
 
 			// 2. salva cliente
-			Cliente cliente = new Cliente();
-			cliente.setTelefone(telefone);
+			String tipo = cbTipo.getValue();
+        	Cliente cliente;
+        	if(tipo.equals("PF")) {
+        	cliente = new PessoaFisica();
+        	} else {
+        		cliente = new PessoaJuridica();
+        	}
+			cliente.setTelefone(tfTelefone.getText().trim());
 			cliente.setEmail(tfEmail.getText().trim());
 			cliente.setTipoCliente(cbTipo.getValue());
 			cliente.setEndereco(endereco);
+			cliente.setIdCliente(clienteProcurado.getIdCliente());
 			clienteCtrl = new ClienteController(cliente);
 			clienteCtrl.atualizarCliente();
 
@@ -293,7 +304,13 @@ public class TelaAtualizarCliente {
 		boolean idOk;
 		try {
 			int idCliente = Integer.parseInt(tfIdCliente.getText().trim());
-			Cliente cliente = new Cliente();
+			String tipo = cbTipo.getValue();
+        	Cliente cliente;
+        	if(tipo.equals("PF")) {
+        	cliente = new PessoaFisica();
+        	} else {
+        		cliente = new PessoaJuridica();
+        	}
 			cliente.setIdCliente(idCliente);
 			clienteCtrl = new ClienteController(cliente);
 			clienteProcurado = clienteCtrl.procurarCliente();

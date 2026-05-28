@@ -43,7 +43,7 @@ public class PessoaFisicaController {
         try {
             Conexao.conectar();
             dao = new PessoaFisicaDAO(Conexao.conexao);
-            return dao.getPessoaFisica(pessoaFisica.getIdCliente());
+            return dao.buscarPorId(pessoaFisica.getIdCliente());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
