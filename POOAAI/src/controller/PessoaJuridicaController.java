@@ -14,6 +14,8 @@ public class PessoaJuridicaController {
 	public PessoaJuridicaController(PessoaJuridica pessoaJuridica) {
 		this.pessoaJuridica = pessoaJuridica;
 	}
+	public PessoaJuridicaController() {
+	}
 	
     public void salvarPessoaJuridica() {
         try {

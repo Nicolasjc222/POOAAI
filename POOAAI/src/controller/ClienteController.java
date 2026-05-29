@@ -12,6 +12,10 @@ public class ClienteController {
     public ClienteController(Cliente cliente) {
         this.cliente = cliente;
     }
+    
+    public ClienteController() {
+    	
+    }
 
     public void salvarCliente() {
         try {

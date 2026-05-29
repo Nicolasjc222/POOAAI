@@ -31,13 +31,13 @@ public class Trocador {
     private static Scene criarTela(String tela) {
         return switch (tela) {
         case "TelaLogin"   -> new TelaLogin().getScene();
-		case "TelaMenu"  -> new TelaMenu().getScene();
-		case "TelaCadastroCliente" -> new TelaCadastroCliente().getScene();
-		case "TelaAtualizarCliente" -> new TelaAtualizarCliente().getScene();
-		case "TelaRemoverCliente" -> new TelaRemoverCliente().getScene();
-		case "TelaCadastroImovel" -> new TelaCadastroImovel().getScene();
-		case "TelaAtualizarImovel" -> new TelaAtualizarImovel().getScene();
-		case "TelaRemoverImovel" -> new TelaRemoverImovel().getScene();
+		case "TelaDashboard" -> new TelaDashboard().getScene();
+		
+		case "TelaAtualizarCliente" -> new TelaAtualizarCliente().getScene(); // remover depois, transformar em region
+		case "TelaRemoverCliente" -> new TelaRemoverCliente().getScene(); // remover depois, transformar em region
+		case "TelaAtualizarImovel" -> new TelaAtualizarImovel().getScene(); // remover depois, transformar em region
+		case "TelaRemoverImovel" -> new TelaRemoverImovel().getScene(); // remover depois, transformar em region
+		
 		default        -> throw new IllegalArgumentException("Tela desconhecida: " + tela);
         };
     }

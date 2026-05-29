@@ -13,6 +13,8 @@ public class ImovelController {
 	public ImovelController(Imovel imovel) {
 		this.imovel = imovel;
 	}
+	public ImovelController() {
+	}
 	
     public void salvarImovel() {
         try {

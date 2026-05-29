@@ -14,6 +14,8 @@ public class EnderecoController {
 	public EnderecoController(Endereco endereco) {
 		this.endereco = endereco;
 	}
+	public EnderecoController() {
+	}
 
 	public void salvarEndereco() {
 		try {
