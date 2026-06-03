@@ -1,13 +1,16 @@
 package view;
 
+import java.util.List;
 import controller.EnderecoController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,6 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import model.Endereco;
+
+
 
 public class TelaGerenciarEnderecos {
 
@@ -45,8 +50,8 @@ public class TelaGerenciarEnderecos {
         
         // Ação do botão: Chama a tela de cadastro que você já tem pronta!
         btnNovoEndereco.setOnAction(e -> {
-            //TelaCadastroEndereco telaCadastro = new TelaCadastroEndereco();
-            //TelaDashboard.mudarConteudo(telaCadastro.getLayout());
+            TelaCadastroEndereco telaCadastro = new TelaCadastroEndereco();
+            TelaDashboard.mudarConteudo(telaCadastro.getLayout());
         });
 
         HBox header = new HBox(20, lblTitulo, spacer, btnNovoEndereco);
@@ -82,7 +87,7 @@ public class TelaGerenciarEnderecos {
         
         TableColumn<Endereco, String> colUf = new TableColumn<>("UF");
         colUf.setCellValueFactory(new PropertyValueFactory<>("uf"));
-        colUf.setPrefWidth(80);
+        colUf.setPrefWidth(100);
         
         TableColumn<Endereco, String> colCep = new TableColumn<>("CEP");
         colCep.setCellValueFactory(new PropertyValueFactory<>("cep"));
@@ -94,9 +99,44 @@ public class TelaGerenciarEnderecos {
         
         TableColumn<Endereco, String> colComplemento = new TableColumn<>("Complemento");
         colComplemento.setCellValueFactory(new PropertyValueFactory<>("complemento"));
-        colComplemento.setPrefWidth(300);
+        colComplemento.setPrefWidth(200);
         
-        tabelaEnderecos.getColumns().add(colId);
+     // --- 2. COLUNA DE AÇÕES (EDITAR E EXCLUIR COMO LINKS) ---
+        TableColumn<Endereco, Void> colAcoes = new TableColumn<>("Ações");
+        colAcoes.setPrefWidth(150);
+        colAcoes.setCellFactory(param -> new TableCell<>() {
+        private final Hyperlink linkEditar = new Hyperlink("Editar");
+        private final Hyperlink linkExcluir = new Hyperlink("Excluir");
+        private final HBox container = new HBox(12, linkEditar, linkExcluir);
+
+        {
+            // Estilização para parecerem links da Web modernos
+            linkEditar.setStyle("-fx-text-fill: #2980b9; -fx-font-weight: bold; -fx-underline: true;");
+            linkExcluir.setStyle("-fx-text-fill: #c0392b; -fx-font-weight: bold; -fx-underline: true;");
+            container.setAlignment(Pos.CENTER);
+
+            linkEditar.setOnAction(event -> {
+                Endereco enderecoSelecionado = getTableView().getItems().get(getIndex());
+                handleEditar(enderecoSelecionado);
+            });
+
+            linkExcluir.setOnAction(event -> {
+            	Endereco enderecoSelecionado = getTableView().getItems().get(getIndex());
+                handleExcluir(enderecoSelecionado);
+            });
+            
+        }
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                setGraphic(container);
+            }
+        }
+        });
+        
         tabelaEnderecos.getColumns().add(colRua);
         tabelaEnderecos.getColumns().add(colBairro);
         tabelaEnderecos.getColumns().add(colCidade);
@@ -104,6 +144,7 @@ public class TelaGerenciarEnderecos {
         tabelaEnderecos.getColumns().add(colCep);
         tabelaEnderecos.getColumns().add(colNumero);
         tabelaEnderecos.getColumns().add(colComplemento);
+        tabelaEnderecos.getColumns().add(colAcoes);
         cardTabela.getChildren().add(tabelaEnderecos);
 
         root.getChildren().addAll(header, cardTabela);
@@ -124,7 +165,7 @@ public class TelaGerenciarEnderecos {
             EnderecoController e = new EnderecoController();
             
             // 1. Buscamos os dados no banco e GUARDAMOS na variável
-            var listaDoBanco = e.listarEnderecos(); 
+            List<Endereco> listaDoBanco = e.listarEnderecos(); 
             
             // 2. Convertendo a lista comum do Java para a lista observável do JavaFX
             ObservableList<Endereco> dados = FXCollections.observableArrayList(listaDoBanco);
@@ -138,4 +179,54 @@ public class TelaGerenciarEnderecos {
             e.printStackTrace();
         }
     }
+    private void handleEditar(Endereco endereco) {
+        try {
+            System.out.println("Buscando dados completos do Endereço ID: " + endereco.getIdEndereco());
+
+            // 1. Instancia o controller passando o objeto da linha selecionada
+            EnderecoController endCtrl = new EnderecoController(endereco);
+            
+            // 2. Busca o endereço completo atualizado diretamente do banco de dados
+            Endereco enderecoCompleto = endCtrl.procurarEndereco(); 
+
+            if (enderecoCompleto != null) {
+                // 3. Abre a tela de atualização passando o objeto totalmente preenchido
+                TelaAtualizaEndereco telaAtualizar = new TelaAtualizaEndereco();
+                Region layoutAtualizacao = telaAtualizar.getLayout(enderecoCompleto);
+                
+                // 4. Faz a troca de tela usando o Dashboard da aplicação
+                TelaDashboard.mudarConteudo(layoutAtualizacao);
+                
+                System.out.println("Tela de atualização de endereço carregada com sucesso.");
+            } else {
+                System.out.println("Erro: Não foi possível encontrar o endereço no banco de dados.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro ao tentar redirecionar para a edição do endereço:");
+            e.printStackTrace();
+        }
+    }
+
+    private void handleExcluir(Endereco endereco) {
+        try {
+            System.out.println("Tentando excluir o Endereco: " + endereco.getIdEndereco());
+            
+            // 1. Instancia o controller passando o cliente da linha selecionada
+            EnderecoController controller = new EnderecoController(endereco);
+            
+            // 2. Chama a exclusão no banco de dados
+            controller.deletarEndereco();
+            
+            // 3. Recarrega a tabela visualmente para o cliente sumir da interface na mesma hora
+            carregarDadosBanco();
+            
+            System.out.println("Cliente excluído com sucesso da tela e do banco!");
+
+        } catch (Exception e) {
+            System.out.println("Erro ao tentar excluir o cliente:");
+            e.printStackTrace();
+        }
+    }
+    
 }

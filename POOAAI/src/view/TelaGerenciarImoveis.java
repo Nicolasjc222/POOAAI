@@ -1,5 +1,7 @@
 package view;
 
+import java.util.List;
+
 import controller.ImovelController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -102,7 +104,7 @@ public class TelaGerenciarImoveis {
             
             // 1. Buscamos a lista de imóveis do banco e GUARDAMOS na variável
             // (Assumindo que o método listarImoveis() retorna um List<Imovel>)
-            var listaDoBanco = c.listarImoveis(); 
+            List<Imovel> listaDoBanco = c.listarImoveis(); 
             
             // 2. Convertemos a lista padrão do Java para a lista observável do JavaFX
             ObservableList<Imovel> dados = FXCollections.observableArrayList(listaDoBanco);

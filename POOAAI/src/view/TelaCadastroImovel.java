@@ -120,7 +120,7 @@ public class TelaCadastroImovel {
         btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
         btnVoltar.setOnAction(e -> {
-        Trocador.voltarTela();
+        TelaDashboard.mudarConteudo(new TelaGerenciarImoveis().getLayout());
         });
         
         HBox hboxBotoes = new HBox(15, btnSalvar, btnLimpar, btnVoltar, lblErro);

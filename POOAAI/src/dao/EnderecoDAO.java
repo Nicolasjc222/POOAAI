@@ -42,6 +42,7 @@ public class EnderecoDAO implements ICrudDAO<Endereco> {
 
         while (rs.next()) {
         	Endereco endereco = new Endereco();
+        	endereco.setIdEndereco(rs.getInt("id_endereco"));
         	endereco.setRua(rs.getString("rua_endereco"));
             endereco.setBairro(rs.getString("bairro_endereco"));
             endereco.setCidade(rs.getString("cidade_endereco"));

@@ -10,6 +10,12 @@ public final class Conexao {
 	private static String server = "jdbc:sqlserver://10.109.8.9:1433;";
 	private static String banco = "databaseName=POO_gp08;";
 	private static String usuario = "user=POO_gp08;password=;encrypt=false;trustServerCertificate=true;loginTimeout=30;";
+/* conexão local do Nycollas
+ * public final class Conexao { private static String server =
+ * "jdbc:sqlserver://localhost:1433;"; private static String banco =
+ * "databaseName=POO_gp08;"; private static String usuario =
+ * "integratedSecurity=true;password=;encrypt=false;trustServerCertificate=true;loginTimeout=30;";
+ */
 
 	public static Connection conexao; // Conecta com o banco
 
@@ -23,13 +29,13 @@ public final class Conexao {
 		}
 	}
 
-	public static void desconectar() { // Fecha a conexão
-		try {
-			conexao.close(); // Fechar conexão
-//			JOptionPane.showMessageDialog(null, "Conexão fechada com sucesso!");
-		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(null, "Erro ao fechar a conexão!\nERRO: " + ex.getMessage());
-		}
+	public static void desconectar() {
+	    if (conexao == null) return; // ← evita o NPE
+	    try {
+	        conexao.close();
+	    } catch (SQLException ex) {
+	        JOptionPane.showMessageDialog(null, "Erro ao fechar a conexão!\nERRO: " + ex.getMessage());
+	    }
 	}
 
 }

@@ -44,7 +44,7 @@ public class TelaAtualizarImovel {
 		btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 		btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
 		btnVoltar.setOnAction(e -> {
-			Trocador.voltarTela();
+		TelaDashboard.mudarConteudo(new TelaGerenciarImoveis().getLayout());
 		});
 
 		Label lblIdImovel = new Label("ID Imovel:");
