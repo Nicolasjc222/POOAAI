@@ -26,319 +26,377 @@ import model.PessoaJuridica;
 
 public class TelaAtualizarCliente {
 
-    private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
-    private TextField tfTelefone, tfEmail;
-    private TextField tfNome, tfCpf;
-    private TextField tfRazaoSocial, tfCnpj;
-    private ComboBox<String> cbTipo;
-    private Label lblErro;
-    private VBox vboxTipoExtra;
-    
-    private Cliente clienteProcurado;
-    private PessoaFisica pessoaFisicaProcurada;
-    private PessoaJuridica pessoaJuridicaProcurada;
+	private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
+	private TextField tfTelefone, tfEmail;
+	private TextField tfNome, tfCpf;
+	private TextField tfRazaoSocial, tfCnpj;
+	private ComboBox<String> cbTipo;
+	private Label lblErro;
+	private VBox vboxTipoExtra;
 
-    private ClienteController clienteCtrl;
-    private EnderecoController enderecoCtrl;
-    private PessoaFisicaController pfCtrl;
-    private PessoaJuridicaController pjCtrl;
+	private Cliente clienteProcurado;
+	private PessoaFisica pessoaFisicaProcurada;
+	private PessoaJuridica pessoaJuridicaProcurada;
 
-    public Region getLayout(Cliente clienteSelecionado) {
-        // 1. Carrega e blinda os dados vindo da tabela e do banco
-        carregarDadosCompletos(clienteSelecionado);
+	private ClienteController clienteCtrl;
+	private EnderecoController enderecoCtrl;
+	private PessoaFisicaController pfCtrl;
+	private PessoaJuridicaController pjCtrl;
 
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.TOP_LEFT); 
-        root.setPadding(new Insets(40));
-        
-        Label lblTitulo = new Label("Atualizar Cliente");
-        lblTitulo.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
-        lblTitulo.setTextFill(Color.valueOf("#2C3E50"));
+	public Region getLayout(Cliente clienteSelecionado) {
+		// 1. Carrega e blinda os dados vindo da tabela e do banco
+		carregarDadosCompletos(clienteSelecionado);
 
-        // Card branco para o formulário
-        VBox cardForm = new VBox(20);
-        cardForm.setPadding(new Insets(30));
-        cardForm.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");    
+		VBox root = new VBox(20);
+		root.setAlignment(Pos.TOP_LEFT); 
+		root.setPadding(new Insets(40));
 
-        // --- Seção Endereço ---
-        Label lblEndereco = new Label("Endereço:");
-        lblEndereco.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+		Label lblTitulo = new Label("Atualizar Cliente");
+		lblTitulo.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
+		lblTitulo.setTextFill(Color.valueOf("#2C3E50"));
 
-        tfCep         = new TextField(); tfCep.setPromptText("00000-000");
-        tfRua         = new TextField(); tfRua.setPromptText("Digite a rua");
-        tfNumero      = new TextField(); tfNumero.setPromptText("Número");
-        tfBairro      = new TextField(); tfBairro.setPromptText("Bairro");
-        tfCidade      = new TextField(); tfCidade.setPromptText("Cidade");
-        tfUF          = new TextField(); tfUF.setPromptText("UF");
-        tfComplemento = new TextField(); tfComplemento.setPromptText("Complemento (opcional)");
+		// Card branco para o formulário
+		VBox cardForm = new VBox(20);
+		cardForm.setPadding(new Insets(30));
+		cardForm.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");    
 
-        // Preenche campos de endereço de forma segura (Null-Safe)
-        if (clienteProcurado != null && clienteProcurado.getEndereco() != null) {
-            tfCep.setText(clienteProcurado.getEndereco().getCep() != null ? clienteProcurado.getEndereco().getCep() : "");
-            tfRua.setText(clienteProcurado.getEndereco().getRua() != null ? clienteProcurado.getEndereco().getRua() : "");
-            tfNumero.setText(String.valueOf(clienteProcurado.getEndereco().getNumero()));
-            tfBairro.setText(clienteProcurado.getEndereco().getBairro() != null ? clienteProcurado.getEndereco().getBairro() : "");
-            tfCidade.setText(clienteProcurado.getEndereco().getCidade() != null ? clienteProcurado.getEndereco().getCidade() : "");
-            tfUF.setText(clienteProcurado.getEndereco().getUf() != null ? clienteProcurado.getEndereco().getUf() : "");
-            tfComplemento.setText(clienteProcurado.getEndereco().getComplemento() != null ? clienteProcurado.getEndereco().getComplemento() : "");
-        }
+		// --- Seção Endereço ---
+		Label lblEndereco = new Label("Endereço:");
+		lblEndereco.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        GridPane gridEndereco = new GridPane();
-        gridEndereco.setHgap(10); gridEndereco.setVgap(12);
-        gridEndereco.setAlignment(Pos.CENTER_LEFT);
-        gridEndereco.add(new Label("CEP:"),         0, 0); gridEndereco.add(tfCep,         1, 0);
-        gridEndereco.add(new Label("Rua:"),         2, 0); gridEndereco.add(tfRua,         3, 0);
-        gridEndereco.add(new Label("Número:"),      0, 1); gridEndereco.add(tfNumero,      1, 1);
-        gridEndereco.add(new Label("Bairro:"),      2, 1); gridEndereco.add(tfBairro,      3, 1);
-        gridEndereco.add(new Label("Cidade:"),      0, 2); gridEndereco.add(tfCidade,      1, 2);
-        gridEndereco.add(new Label("UF:"),          2, 2); gridEndereco.add(tfUF,          3, 2);
-        gridEndereco.add(new Label("Complemento:"), 0, 3); gridEndereco.add(tfComplemento, 1, 3);
+		tfCep         = new TextField(); tfCep.setPromptText("00000-000");
+		tfRua         = new TextField(); tfRua.setPromptText("Digite a rua");
+		tfNumero      = new TextField(); tfNumero.setPromptText("Número");
+		tfBairro      = new TextField(); tfBairro.setPromptText("Bairro");
+		tfCidade      = new TextField(); tfCidade.setPromptText("Cidade");
+		tfUF          = new TextField(); tfUF.setPromptText("UF");
+		tfComplemento = new TextField(); tfComplemento.setPromptText("Complemento (opcional)");
 
-        VBox vboxEndereco = new VBox(10, lblEndereco, gridEndereco);
+		// Preenche campos de endereço de forma segura (Null-Safe)
+		if (clienteProcurado != null && clienteProcurado.getEndereco() != null) {
+			tfCep.setText(clienteProcurado.getEndereco().getCep() != null ? clienteProcurado.getEndereco().getCep() : "");
+			tfRua.setText(clienteProcurado.getEndereco().getRua() != null ? clienteProcurado.getEndereco().getRua() : "");
+			tfNumero.setText(String.valueOf(clienteProcurado.getEndereco().getNumero()));
+			tfBairro.setText(clienteProcurado.getEndereco().getBairro() != null ? clienteProcurado.getEndereco().getBairro() : "");
+			tfCidade.setText(clienteProcurado.getEndereco().getCidade() != null ? clienteProcurado.getEndereco().getCidade() : "");
+			tfUF.setText(clienteProcurado.getEndereco().getUf() != null ? clienteProcurado.getEndereco().getUf() : "");
+			tfComplemento.setText(clienteProcurado.getEndereco().getComplemento() != null ? clienteProcurado.getEndereco().getComplemento() : "");
+		}
 
-        // --- Seção Cliente ---
-        Label lblDadosCliente = new Label("Dados do Cliente:");
-        lblDadosCliente.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+		GridPane gridEndereco = new GridPane();
+		gridEndereco.setHgap(10); gridEndereco.setVgap(12);
+		gridEndereco.setAlignment(Pos.CENTER_LEFT);
+		gridEndereco.add(new Label("CEP:"),         0, 0); gridEndereco.add(tfCep,         1, 0);
+		gridEndereco.add(new Label("Rua:"),         2, 0); gridEndereco.add(tfRua,         3, 0);
+		gridEndereco.add(new Label("Número:"),      0, 1); gridEndereco.add(tfNumero,      1, 1);
+		gridEndereco.add(new Label("Bairro:"),      2, 1); gridEndereco.add(tfBairro,      3, 1);
+		gridEndereco.add(new Label("Cidade:"),      0, 2); gridEndereco.add(tfCidade,      1, 2);
+		gridEndereco.add(new Label("UF:"),          2, 2); gridEndereco.add(tfUF,          3, 2);
+		gridEndereco.add(new Label("Complemento:"), 0, 3); gridEndereco.add(tfComplemento, 1, 3);
 
-        tfTelefone = new TextField(); tfTelefone.setPromptText("Digite o telefone");
-        tfEmail    = new TextField(); tfEmail.setPromptText("Digite o email");
+		VBox vboxEndereco = new VBox(10, lblEndereco, gridEndereco);
 
-        if (clienteProcurado != null) {
-            tfTelefone.setText(clienteProcurado.getTelefone() != null ? String.valueOf(clienteProcurado.getTelefone()) : "");
-            tfEmail.setText(clienteProcurado.getEmail() != null ? clienteProcurado.getEmail() : "");
-        }
+		// --- Seção Cliente ---
+		Label lblDadosCliente = new Label("Dados do Cliente:");
+		lblDadosCliente.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        cbTipo = new ComboBox<>();
-        cbTipo.getItems().addAll("PF", "PJ");
-        cbTipo.setValue(clienteProcurado != null ? clienteProcurado.getTipoCliente() : "PF");
-        cbTipo.setDisable(true); 
+		tfTelefone = new TextField(); tfTelefone.setPromptText("Digite o telefone");
+		tfEmail    = new TextField(); tfEmail.setPromptText("Digite o email");
 
-        vboxTipoExtra = new VBox(10);
-        vboxTipoExtra.setAlignment(Pos.CENTER_LEFT);
+		if (clienteProcurado != null) {
+			tfTelefone.setText(clienteProcurado.getTelefone() != null ? String.valueOf(clienteProcurado.getTelefone()) : "");
+			tfEmail.setText(clienteProcurado.getEmail() != null ? clienteProcurado.getEmail() : "");
+		}
 
-        GridPane gridTipo = new GridPane();
-        gridTipo.setHgap(10); gridTipo.setVgap(12);
-        gridTipo.setAlignment(Pos.CENTER_LEFT);
+		cbTipo = new ComboBox<>();
+		cbTipo.getItems().addAll("PF", "PJ");
+		cbTipo.setValue(clienteProcurado != null ? clienteProcurado.getTipoCliente() : "PF");
+		cbTipo.setDisable(true); 
 
-        if ("PF".equals(cbTipo.getValue())) {
-            tfNome = new TextField(); tfNome.setPromptText("Nome completo");
-            tfCpf  = new TextField(); tfCpf.setPromptText("000.000.000-00");
-            if (pessoaFisicaProcurada != null) {
-                tfNome.setText(pessoaFisicaProcurada.getNome() != null ? pessoaFisicaProcurada.getNome() : "");
-                tfCpf.setText(pessoaFisicaProcurada.getCpf() != null ? pessoaFisicaProcurada.getCpf() : "");
-            }
-            gridTipo.add(new Label("Nome:"), 0, 0); gridTipo.add(tfNome, 1, 0);
-            gridTipo.add(new Label("CPF:"),  0, 1); gridTipo.add(tfCpf,  1, 1);
-        } else {
-            tfRazaoSocial = new TextField(); tfRazaoSocial.setPromptText("Razão Social");
-            tfCnpj        = new TextField(); tfCnpj.setPromptText("00.000.000/0000-00");
-            if (pessoaJuridicaProcurada != null) {
-                tfRazaoSocial.setText(pessoaJuridicaProcurada.getRazaoSocial() != null ? pessoaJuridicaProcurada.getRazaoSocial() : "");
-                tfCnpj.setText(pessoaJuridicaProcurada.getCnpj() != null ? pessoaJuridicaProcurada.getCnpj() : "");
-            }
-            gridTipo.add(new Label("Razão Social:"), 0, 0); gridTipo.add(tfRazaoSocial, 1, 0);
-            gridTipo.add(new Label("CNPJ:"),         0, 1); gridTipo.add(tfCnpj,        1, 1);
-        }
-        vboxTipoExtra.getChildren().add(gridTipo);
+		vboxTipoExtra = new VBox(10);
+		vboxTipoExtra.setAlignment(Pos.CENTER_LEFT);
 
-        GridPane gridCliente = new GridPane();
-        gridCliente.setHgap(10); gridCliente.setVgap(12);
-        gridCliente.setAlignment(Pos.CENTER_LEFT);
-        gridCliente.add(new Label("Telefone:"),  0, 0); gridCliente.add(tfTelefone, 1, 0);
-        gridCliente.add(new Label("Email:"),     0, 1); gridCliente.add(tfEmail,    1, 1);
-        gridCliente.add(new Label("Tipo:"),      0, 2); gridCliente.add(cbTipo,     1, 2);
+		GridPane gridTipo = new GridPane();
+		gridTipo.setHgap(10); gridTipo.setVgap(12);
+		gridTipo.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vboxCliente = new VBox(10, lblDadosCliente, gridCliente, vboxTipoExtra);
+		if ("PF".equals(cbTipo.getValue())) {
+			tfNome = new TextField(); tfNome.setPromptText("Nome completo");
+			tfCpf  = new TextField(); tfCpf.setPromptText("000.000.000-00");
+			if (pessoaFisicaProcurada != null) {
+				tfNome.setText(pessoaFisicaProcurada.getNome() != null ? pessoaFisicaProcurada.getNome() : "");
+				tfCpf.setText(pessoaFisicaProcurada.getCpf() != null ? pessoaFisicaProcurada.getCpf() : "");
+			}
+			gridTipo.add(new Label("Nome:"), 0, 0); gridTipo.add(tfNome, 1, 0);
+			gridTipo.add(new Label("CPF:"),  0, 1); gridTipo.add(tfCpf,  1, 1);
+		} else {
+			tfRazaoSocial = new TextField(); tfRazaoSocial.setPromptText("Razão Social");
+			tfCnpj        = new TextField(); tfCnpj.setPromptText("00.000.000/0000-00");
+			if (pessoaJuridicaProcurada != null) {
+				tfRazaoSocial.setText(pessoaJuridicaProcurada.getRazaoSocial() != null ? pessoaJuridicaProcurada.getRazaoSocial() : "");
+				tfCnpj.setText(pessoaJuridicaProcurada.getCnpj() != null ? pessoaJuridicaProcurada.getCnpj() : "");
+			}
+			gridTipo.add(new Label("Razão Social:"), 0, 0); gridTipo.add(tfRazaoSocial, 1, 0);
+			gridTipo.add(new Label("CNPJ:"),         0, 1); gridTipo.add(tfCnpj,        1, 1);
+		}
+		vboxTipoExtra.getChildren().add(gridTipo);
 
-        lblErro = new Label();
-        lblErro.setFont(Font.font(12));
+		GridPane gridCliente = new GridPane();
+		gridCliente.setHgap(10); gridCliente.setVgap(12);
+		gridCliente.setAlignment(Pos.CENTER_LEFT);
+		gridCliente.add(new Label("Telefone:"),  0, 0); gridCliente.add(tfTelefone, 1, 0);
+		gridCliente.add(new Label("Email:"),     0, 1); gridCliente.add(tfEmail,    1, 1);
+		gridCliente.add(new Label("Tipo:"),      0, 2); gridCliente.add(cbTipo,     1, 2);
 
-        // --- Botões ---
-        Button btnSalvar = new Button("Salvar Alterações");
-        btnSalvar.setPrefWidth(180);
-        btnSalvar.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
-        btnSalvar.setOnAction(e -> {
-            try {
-                handleAtualizar();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        });
-        
-        Button btnCancelar = new Button("Cancelar");
-        btnCancelar.setPrefWidth(120);
-        btnCancelar.setStyle("-fx-background-color: #7F8C8D; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
-        btnCancelar.setOnAction(e -> {
-            TelaDashboard.mudarConteudo(new TelaGerenciarClientes().getLayout());
-        });
-        
-        HBox hboxBotoes = new HBox(15, btnSalvar, btnCancelar, lblErro);
-        hboxBotoes.setAlignment(Pos.CENTER_LEFT);
+		VBox vboxCliente = new VBox(10, lblDadosCliente, gridCliente, vboxTipoExtra);
 
-        cardForm.getChildren().addAll(vboxEndereco, vboxCliente, hboxBotoes);
-        root.getChildren().addAll(lblTitulo, cardForm);
+		lblErro = new Label();
+		lblErro.setFont(Font.font(12));
 
-        ScrollPane scroll = new ScrollPane(root);
-        scroll.setFitToWidth(true);
-        scroll.setStyle("-fx-background-color: transparent; -fx-background: #F4F6F8;");
-        
-        return scroll;
-    }
+		// --- Botões ---
+		Button btnSalvar = new Button("Salvar Alterações");
+		btnSalvar.setPrefWidth(180);
+		btnSalvar.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
+		btnSalvar.setOnAction(e -> {
+			try {
+				handleAtualizar();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
 
-    private void carregarDadosCompletos(Cliente clienteSelecionado) {
-        if (clienteSelecionado == null) return;
+		Button btnCancelar = new Button("Cancelar");
+		btnCancelar.setPrefWidth(120);
+		btnCancelar.setStyle("-fx-background-color: #7F8C8D; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
+		btnCancelar.setOnAction(e -> {
+			TelaDashboard.mudarConteudo(new TelaGerenciarClientes().getLayout());
+		});
 
-        // PASSO DE SEGURANÇA: Definimos o clienteProcurado inicialmente com os dados da tabela!
-        // Se a busca no banco falhar, o formulário abre com telefone, email e nome preenchidos.
-        this.clienteProcurado = clienteSelecionado;
-        
-        try {
-            int idCliente = clienteSelecionado.getIdCliente();
-            String tipo = clienteSelecionado.getTipoCliente();
-            
-            // LOG DE DIAGNÓSTICO: Verifique no seu console se o ID está vindo correto ou se está "0"
-            System.out.println("[DEBUG] Editando Cliente - ID vindo da Tabela: " + idCliente + " | Tipo: " + tipo);
-            
-            // Tenta buscar os dados da tabela mãe (Cliente)
-            clienteCtrl = new ClienteController(clienteSelecionado);
-            Cliente clienteBanco = clienteCtrl.procurarCliente();
-            if (clienteBanco != null) {
-                this.clienteProcurado = clienteBanco;
-            }
+		HBox hboxBotoes = new HBox(15, btnSalvar, btnCancelar, lblErro);
+		hboxBotoes.setAlignment(Pos.CENTER_LEFT);
 
-            // Tenta buscar os dados da tabela filha (PF ou PJ)
-            if ("PF".equals(tipo)) {
-                pessoaFisicaProcurada = new PessoaFisica();
-                pessoaFisicaProcurada.setIdCliente(idCliente);
-                pfCtrl = new PessoaFisicaController(pessoaFisicaProcurada);
-                PessoaFisica pfBanco = pfCtrl.procurarPessoaFisica();
-                
-                if (pfBanco != null) {
-                    this.pessoaFisicaProcurada = pfBanco;
-                } else if (clienteSelecionado instanceof PessoaFisica) {
-                    this.pessoaFisicaProcurada = (PessoaFisica) clienteSelecionado;
-                }
-            } else if ("PJ".equals(tipo)) {
-                pessoaJuridicaProcurada = new PessoaJuridica();
-                pessoaJuridicaProcurada.setIdCliente(idCliente);
-                pjCtrl = new PessoaJuridicaController(pessoaJuridicaProcurada);
-                PessoaJuridica pjBanco = pjCtrl.procurarPessoaJuridica();
-                
-                if (pjBanco != null) {
-                    this.pessoaJuridicaProcurada = pjBanco;
-                } else if (clienteSelecionado instanceof PessoaJuridica) {
-                    this.pessoaJuridicaProcurada = (PessoaJuridica) clienteSelecionado;
-                }
-            }
-            
-            // Tenta buscar o endereço associado
-            if (this.clienteProcurado.getEndereco() != null) {
-                enderecoCtrl = new EnderecoController(this.clienteProcurado.getEndereco());
-                Endereco endBanco = enderecoCtrl.procurarEndereco();
-                if (endBanco != null) {
-                    this.clienteProcurado.setEndereco(endBanco);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("[AVISO] Erro ao carregar dados adicionais do banco. Usando dados da tabela.");
-            e.printStackTrace();
-        }
-    }
+		cardForm.getChildren().addAll(vboxEndereco, vboxCliente, hboxBotoes);
+		root.getChildren().addAll(lblTitulo, cardForm);
 
-    private boolean validarCampos() {
-        boolean telefoneOk;
-        boolean numeroOk;
+		ScrollPane scroll = new ScrollPane(root);
+		scroll.setFitToWidth(true);
+		scroll.setStyle("-fx-background-color: transparent; -fx-background: #F4F6F8;");
 
-        try {
-            Long.parseLong(tfTelefone.getText().trim());
-            telefoneOk = tfTelefone.getText().trim().length() >= 8;
-        } catch (NumberFormatException e) { telefoneOk = false; }
+		return scroll;
+	}
 
-        try { Integer.parseInt(tfNumero.getText().trim()); numeroOk = true; }
-        catch (NumberFormatException e) { numeroOk = false; }
+	private void carregarDadosCompletos(Cliente clienteSelecionado) {
+		if (clienteSelecionado == null) return;
 
-        if (cbTipo.getValue() == null) return false;
+		// PASSO DE SEGURANÇA: Definimos o clienteProcurado inicialmente com os dados da tabela!
+		// Se a busca no banco falhar, o formulário abre com telefone, email e nome preenchidos.
+		this.clienteProcurado = clienteSelecionado;
 
-        boolean tipoExtraOk;
-        if (cbTipo.getValue().equals("PF")) {
-            tipoExtraOk = tfNome != null && !tfNome.getText().trim().isEmpty() &&
-                          tfCpf  != null && !tfCpf.getText().trim().isEmpty();
-        } else {
-            tipoExtraOk = tfRazaoSocial != null && !tfRazaoSocial.getText().trim().isEmpty() &&
-                          tfCnpj        != null && !tfCnpj.getText().trim().isEmpty();
-        }
+		try {
+			int idCliente = clienteSelecionado.getIdCliente();
+			String tipo = clienteSelecionado.getTipoCliente();
 
-        return !tfRua.getText().trim().isEmpty() &&
-               !tfBairro.getText().trim().isEmpty() &&
-               !tfCidade.getText().trim().isEmpty() &&
-               !tfEmail.getText().trim().isEmpty() &&
-               tfUF.getText().trim().length() == 2 &&
-               tfCep.getText().trim().length() == 8 &&
-               telefoneOk &&
-               numeroOk &&
-               tipoExtraOk;
-    }
+			// LOG DE DIAGNÓSTICO: Verifique no seu console se o ID está vindo correto ou se está "0"
+			System.out.println("[DEBUG] Editando Cliente - ID vindo da Tabela: " + idCliente + " | Tipo: " + tipo);
 
-    private void handleAtualizar() throws SQLException {
-        lblErro.setText("");
-        if (validarCampos()) {
-            int numero = Integer.parseInt(tfNumero.getText().trim());
+			// Tenta buscar os dados da tabela mãe (Cliente)
+			clienteCtrl = new ClienteController(clienteSelecionado);
+			Cliente clienteBanco = clienteCtrl.procurarCliente();
+			if (clienteBanco != null) {
+				this.clienteProcurado = clienteBanco;
+			}
 
-            // 1. Atualiza endereço (Cria objeto caso estivesse nulo)
-            int idEnderecoExistente = (clienteProcurado.getEndereco() != null) ? clienteProcurado.getEndereco().getIdEndereco() : 0;
-            
-            Endereco endereco = new Endereco(
-                tfRua.getText().trim(), tfBairro.getText().trim(),
-                tfCidade.getText().trim(), tfUF.getText().trim(),
-                tfCep.getText().trim(), numero, tfComplemento.getText().trim()
-            );
-            endereco.setIdEndereco(idEnderecoExistente);
-            enderecoCtrl = new EnderecoController(endereco);
-            
-            if (idEnderecoExistente > 0) {
-                enderecoCtrl.atualizarEndereco();
-            } else {
-                // Caso não tivesse endereço, você pode chamar o salvar do endereço aqui
-            }
+			// Tenta buscar os dados da tabela filha (PF ou PJ)
+			if ("PF".equals(tipo)) {
+				pessoaFisicaProcurada = new PessoaFisica();
+				pessoaFisicaProcurada.setIdCliente(idCliente);
+				pfCtrl = new PessoaFisicaController(pessoaFisicaProcurada);
+				PessoaFisica pfBanco = pfCtrl.procurarPessoaFisica();
 
-            // 2. Atualiza cliente
-            Cliente cliente = "PF".equals(cbTipo.getValue()) ? new PessoaFisica() : new PessoaJuridica();
-            cliente.setTelefone(tfTelefone.getText().trim());
-            cliente.setEmail(tfEmail.getText().trim());
-            cliente.setTipoCliente(cbTipo.getValue());
-            cliente.setEndereco(endereco);
-            cliente.setIdCliente(clienteProcurado.getIdCliente());
-            
-            clienteCtrl = new ClienteController(cliente);
-            clienteCtrl.atualizarCliente();
+				if (pfBanco != null) {
+					this.pessoaFisicaProcurada = pfBanco;
+				} else if (clienteSelecionado instanceof PessoaFisica) {
+					this.pessoaFisicaProcurada = (PessoaFisica) clienteSelecionado;
+				}
+			} else if ("PJ".equals(tipo)) {
+				pessoaJuridicaProcurada = new PessoaJuridica();
+				pessoaJuridicaProcurada.setIdCliente(idCliente);
+				pjCtrl = new PessoaJuridicaController(pessoaJuridicaProcurada);
+				PessoaJuridica pjBanco = pjCtrl.procurarPessoaJuridica();
 
-            // 3. Atualiza PF ou PJ
-            if (cbTipo.getValue().equals("PF")) {
-                PessoaFisica pf = new PessoaFisica();
-                pf.setIdCliente(cliente.getIdCliente());
-                pf.setNome(tfNome.getText().trim());
-                pf.setCpf(tfCpf.getText().trim());
-                pfCtrl = new PessoaFisicaController(pf);
-                pfCtrl.atualizarPessoaFisica();
-            } else {
-                PessoaJuridica pj = new PessoaJuridica();
-                pj.setIdCliente(cliente.getIdCliente());
-                pj.setRazaoSocial(tfRazaoSocial.getText().trim());
-                pj.setCnpj(tfCnpj.getText().trim());
-                pjCtrl = new PessoaJuridicaController(pj);
-                pjCtrl.atualizarPessoaJuridica();
-            }
+				if (pjBanco != null) {
+					this.pessoaJuridicaProcurada = pjBanco;
+				} else if (clienteSelecionado instanceof PessoaJuridica) {
+					this.pessoaJuridicaProcurada = (PessoaJuridica) clienteSelecionado;
+				}
+			}
 
-            lblErro.setTextFill(Color.GREEN);
-            lblErro.setText("Cliente atualizado com sucesso!");
-            
-            javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1.5));
-            delay.setOnFinished(event -> TelaDashboard.mudarConteudo(new TelaGerenciarClientes().getLayout()));
-            delay.play();
-            
-        } else {
-            lblErro.setTextFill(Color.RED);
-            lblErro.setText("Por favor, preencha todos os campos corretamente!");
-        }
-    }
+			// Tenta buscar o endereço associado
+			if (this.clienteProcurado.getEndereco() != null) {
+				enderecoCtrl = new EnderecoController(this.clienteProcurado.getEndereco());
+				Endereco endBanco = enderecoCtrl.procurarEndereco();
+				if (endBanco != null) {
+					this.clienteProcurado.setEndereco(endBanco);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("[AVISO] Erro ao carregar dados adicionais do banco. Usando dados da tabela.");
+			e.printStackTrace();
+		}
+	}
+
+	private boolean validarCampos() {
+		boolean telefoneOk;
+		boolean numeroOk;
+
+		try {
+			Long.parseLong(tfTelefone.getText().trim());
+			if(tfTelefone.getText().trim().length() > 9) {
+				telefoneOk = true;
+			} else { telefoneOk = false; }
+		}
+		catch (NumberFormatException e) { telefoneOk = false; }
+
+
+		try { Integer.parseInt(tfNumero.getText().trim()); numeroOk = true; }
+		catch (NumberFormatException e) { numeroOk = false; }
+
+		if (cbTipo.getValue() == null) return false;
+
+		boolean tipoExtraOk;
+		if (cbTipo.getValue().equals("PF")) {
+			tipoExtraOk = tfNome != null && !tfNome.getText().trim().isEmpty() && verificarCpf(tfCpf.getText().trim());
+		} else {
+			tipoExtraOk = tfRazaoSocial != null && !tfRazaoSocial.getText().trim().isEmpty() && verificarCnpj(tfCnpj.getText().trim());
+		}
+
+		return !tfRua.getText().trim().isEmpty() &&
+				!tfBairro.getText().trim().isEmpty() &&
+				!tfCidade.getText().trim().isEmpty() &&
+				verificarEmail(tfEmail.getText().trim()) &&
+				tfUF.getText().trim().length() == 2 &&
+				tfCep.getText().trim().length() == 8 &&
+				telefoneOk &&
+				numeroOk &&
+				tipoExtraOk;
+	}
+
+	private boolean verificarCpf(String cpf) {
+		cpf = cpf.replaceAll("[^0-9]", "");
+		if (cpf.length() != 11) return false;
+
+		int digito1 = 0;
+		int digito2 = 0;
+
+		for (int x = 10, y = 0; x >= 2; x--, y++) {
+			digito1 += (cpf.charAt(y) - '0') * x;
+		}
+		digito1 = 11 - digito1 % 11;
+		if (digito1 >= 10) digito1 = 0;
+
+		for (int x = 11, y = 0; x >= 3; x--, y++) {
+			digito2 += (cpf.charAt(y) - '0') * x;
+		}
+		digito2 += digito1 * 2;
+		digito2 = 11 - digito2 % 11;
+		if (digito2 >= 10) digito2 = 0;
+
+		return (cpf.charAt(9)  - '0') == digito1 && (cpf.charAt(10) - '0') == digito2;
+	}
+
+	private boolean verificarCnpj(String cnpj) {
+		cnpj = cnpj.replaceAll("[^0-9A-Z]", "");
+		if (cnpj.length() != 14) return false;
+
+		int digito1 = 0;
+		for (int x = 5, y = 0; y < 12; x--, y++) {
+			if (x == 1) x = 10;
+			digito1 += valorChar(cnpj.charAt(y)) * x;
+		}
+		digito1 = 11 - digito1 % 11;
+		if (digito1 >= 10) digito1 = 0;
+
+		int digito2 = 0;
+		for (int x = 6, y = 0; y < 13; x--, y++) {
+			if (x == 1) x = 10;
+			digito2 += valorChar(cnpj.charAt(y)) * x;
+		}
+		digito2 = 11 - digito2 % 11;
+		if (digito2 >= 10) digito2 = 0;
+
+		return valorChar(cnpj.charAt(12)) == digito1 &&
+				valorChar(cnpj.charAt(13)) == digito2;
+	}
+
+	private int valorChar(char c) {
+		if (c >= '0' && c <= '9') return c - '0';
+		return c - 'A' + 10;
+	}
+
+	private boolean verificarEmail(String email) {
+		return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+	}
+
+	private void handleAtualizar() throws SQLException {
+		lblErro.setText("");
+		if (validarCampos()) {
+			int numero = Integer.parseInt(tfNumero.getText().trim());
+
+			// 1. Atualiza endereço (Cria objeto caso estivesse nulo)
+			int idEnderecoExistente = (clienteProcurado.getEndereco() != null) ? clienteProcurado.getEndereco().getIdEndereco() : 0;
+
+			Endereco endereco = new Endereco(
+					tfRua.getText().trim(), tfBairro.getText().trim(),
+					tfCidade.getText().trim(), tfUF.getText().trim(),
+					tfCep.getText().trim(), numero, tfComplemento.getText().trim()
+					);
+			endereco.setIdEndereco(idEnderecoExistente);
+			enderecoCtrl = new EnderecoController(endereco);
+
+			if (idEnderecoExistente > 0) {
+				enderecoCtrl.atualizarEndereco();
+			} else {
+				// Caso não tivesse endereço, você pode chamar o salvar do endereço aqui
+			}
+
+			// 2. Atualiza cliente
+			Cliente cliente = "PF".equals(cbTipo.getValue()) ? new PessoaFisica() : new PessoaJuridica();
+			cliente.setTelefone(tfTelefone.getText().trim());
+			cliente.setEmail(tfEmail.getText().trim());
+			cliente.setTipoCliente(cbTipo.getValue());
+			cliente.setEndereco(endereco);
+			cliente.setIdCliente(clienteProcurado.getIdCliente());
+
+			clienteCtrl = new ClienteController(cliente);
+			clienteCtrl.atualizarCliente();
+
+			// 3. Atualiza PF ou PJ
+			if (cbTipo.getValue().equals("PF")) {
+				PessoaFisica pf = new PessoaFisica();
+				pf.setIdCliente(cliente.getIdCliente());
+				pf.setNome(tfNome.getText().trim());
+				pf.setCpf(tfCpf.getText().trim());
+				pfCtrl = new PessoaFisicaController(pf);
+				pfCtrl.atualizarPessoaFisica();
+			} else {
+				PessoaJuridica pj = new PessoaJuridica();
+				pj.setIdCliente(cliente.getIdCliente());
+				pj.setRazaoSocial(tfRazaoSocial.getText().trim());
+				pj.setCnpj(tfCnpj.getText().trim());
+				pjCtrl = new PessoaJuridicaController(pj);
+				pjCtrl.atualizarPessoaJuridica();
+			}
+
+			lblErro.setTextFill(Color.GREEN);
+			lblErro.setText("Cliente atualizado com sucesso!");
+
+			javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1.5));
+			delay.setOnFinished(event -> TelaDashboard.mudarConteudo(new TelaGerenciarClientes().getLayout()));
+			delay.play();
+
+		} else {
+			lblErro.setTextFill(Color.RED);
+			lblErro.setText("Por favor, preencha todos os campos corretamente!");
+		}
+	}
 }

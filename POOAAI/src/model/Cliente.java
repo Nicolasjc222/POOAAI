@@ -6,7 +6,7 @@ public abstract class Cliente {
 	private	String email;
 	private	Endereco endereco = new Endereco();
 	private String tipoCliente;
-	
+
 	public Cliente(int idCliente, String telefone, String email, Endereco endereco, String tipoCliente) {
 		super();
 		this.idCliente = idCliente;
@@ -15,19 +15,19 @@ public abstract class Cliente {
 		this.endereco = endereco;
 		this.tipoCliente = tipoCliente;
 	}
-	
+
 	public Cliente() {
 		super();
 	}
-	
+
 	public String getTipoCliente() {
 		return tipoCliente;
 	}
-	
+
 	public void setTipoCliente(String tipoCliente){
 		this.tipoCliente = tipoCliente;
 	}
-	
+
 	public int getIdCliente() {
 		return idCliente;
 	}

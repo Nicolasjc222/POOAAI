@@ -8,9 +8,9 @@ public class Imovel {
 	private int area;
 	private int valor;
 	private int comodos;
-    private String finalidade;
+	private String finalidade;
 
-	
+
 	//Construtor
 	public Imovel(Endereco endereco, String tipoPropriedade, int area, int valor, int comodos) {
 		super();
@@ -20,13 +20,13 @@ public class Imovel {
 		this.valor = valor;
 		this.comodos = comodos;
 	}
-	
+
 	public Imovel() {
 		super();
 	}
-	
+
 	//Getters e Setters
-	
+
 	public int getIdImovel() {
 		return idImovel;
 	}
@@ -42,7 +42,7 @@ public class Imovel {
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
-	
+
 	public String getTipoPropriedade() {
 		return tipoPropriedade;
 	}
@@ -74,14 +74,14 @@ public class Imovel {
 	public void setComodos(int comodos) {
 		this.comodos = comodos;
 	}
-	
-	// Adicione lá embaixo nos getters e setters:
-    public String getFinalidade() {
-        return finalidade;
-    }
 
-    public void setFinalidade(String finalidade) {
-        this.finalidade = finalidade;
-    }
-	
+	// Adicione lá embaixo nos getters e setters:
+	public String getFinalidade() {
+		return finalidade;
+	}
+
+	public void setFinalidade(String finalidade) {
+		this.finalidade = finalidade;
+	}
+
 }

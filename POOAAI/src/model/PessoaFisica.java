@@ -3,17 +3,17 @@ package model;
 public class PessoaFisica extends Cliente {
 	private String nome;
 	private String cpf;
-	
+
 	public PessoaFisica(String nome, String cpf) {
 		super();
 		this.nome = nome;
 		this.cpf = cpf;
 	}
-	
+
 	public PessoaFisica() {
 		super();
 	}
-	
+
 	public String getNome() {
 		return nome;
 	}
@@ -26,6 +26,6 @@ public class PessoaFisica extends Cliente {
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}
-	
-	
+
+
 }

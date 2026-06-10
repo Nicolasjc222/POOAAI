@@ -53,29 +53,29 @@ public class EnderecoController {
 		}
 	}
 	public Endereco procurarEndereco() {
-        try {
-            Conexao.conectar();
-            dao = new EnderecoDAO(Conexao.conexao);
-            return dao.buscarPorId(endereco.getIdEndereco());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            Conexao.desconectar();
-        }
-    }
+		try {
+			Conexao.conectar();
+			dao = new EnderecoDAO(Conexao.conexao);
+			return dao.buscarPorId(endereco.getIdEndereco());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			Conexao.desconectar();
+		}
+	}
 
-    public List<Endereco> listarEnderecos() {
-        try {
-            Conexao.conectar();
-            dao = new EnderecoDAO(Conexao.conexao);
-            return dao.listar();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            Conexao.desconectar();
-        }
-    }
+	public List<Endereco> listarEnderecos() {
+		try {
+			Conexao.conectar();
+			dao = new EnderecoDAO(Conexao.conexao);
+			return dao.listar();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			Conexao.desconectar();
+		}
+	}
 }
 

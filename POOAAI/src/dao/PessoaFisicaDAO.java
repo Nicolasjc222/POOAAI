@@ -7,79 +7,79 @@ import model.PessoaFisica;
 
 public class PessoaFisicaDAO implements ICrudDAO<PessoaFisica> {
 
-    private Connection conn;
+	private Connection conn;
 
-    public PessoaFisicaDAO(Connection conn) {
-        this.conn = conn;
-    }
+	public PessoaFisicaDAO(Connection conn) {
+		this.conn = conn;
+	}
 
-    public void inserir(PessoaFisica pessoaFisica) throws SQLException {
-        String sql = "INSERT INTO pf (cpf_cliente, nome, id_cliente) VALUES (?, ?, ?)"; // trocara para pf
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, pessoaFisica.getCpf());
-        stmt.setString(2, pessoaFisica.getNome());
-        stmt.setInt(3, pessoaFisica.getIdCliente());
+	public void inserir(PessoaFisica pessoaFisica) throws SQLException {
+		String sql = "INSERT INTO pf (cpf_cliente, nome, id_cliente) VALUES (?, ?, ?)"; // trocara para pf
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, pessoaFisica.getCpf());
+		stmt.setString(2, pessoaFisica.getNome());
+		stmt.setInt(3, pessoaFisica.getIdCliente());
 
-        stmt.executeUpdate();
-        stmt.close();
-    }
+		stmt.executeUpdate();
+		stmt.close();
+	}
 
-    public List<PessoaFisica> listar() throws SQLException {
-        List<PessoaFisica> lista = new ArrayList<>();
-        String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente";
+	public List<PessoaFisica> listar() throws SQLException {
+		List<PessoaFisica> lista = new ArrayList<>();
+		String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente";
 
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
 
-        while (rs.next()) {
-        	PessoaFisica pessoaFisica = new PessoaFisica();
-        	
-        	pessoaFisica.setCpf(rs.getString("cpf_cliente"));
-        	pessoaFisica.setNome(rs.getString("nome"));
-        	
-        	pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
-        	pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
-        	pessoaFisica.setEmail(rs.getString("email_cliente"));
-            lista.add(pessoaFisica);
-        }
+		while (rs.next()) {
+			PessoaFisica pessoaFisica = new PessoaFisica();
 
-        return lista;
-    }
-    
-    public PessoaFisica buscarPorId(int id) throws SQLException {
-        String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente WHERE pf.id_cliente = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
+			pessoaFisica.setCpf(rs.getString("cpf_cliente"));
+			pessoaFisica.setNome(rs.getString("nome"));
 
-        if (rs.next()) {
-        	PessoaFisica pessoaFisica = new PessoaFisica();
-        	
-        	pessoaFisica.setCpf(rs.getString("cpf_cliente"));
-        	pessoaFisica.setNome(rs.getString("nome"));
-        	
-        	pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
-        	pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
-        	pessoaFisica.setEmail(rs.getString("email_cliente"));
-            return pessoaFisica;
-        }
+			pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
+			pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
+			pessoaFisica.setEmail(rs.getString("email_cliente"));
+			lista.add(pessoaFisica);
+		}
 
-        return null;
-    }
-    
-    public void atualizar(PessoaFisica pessoaFisica) throws SQLException {
-        String sql = "UPDATE pf SET cpf_cliente = ?, nome = ? WHERE id_cliente = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, pessoaFisica.getCpf());
-        stmt.setString(2, pessoaFisica.getNome());
-        stmt.setInt(3, pessoaFisica.getIdCliente());
-        stmt.executeUpdate();
-        stmt.close();
-    }
+		return lista;
+	}
+
+	public PessoaFisica buscarPorId(int id) throws SQLException {
+		String sql = "SELECT c.*, pf.* FROM pf JOIN cliente c ON pf.id_cliente = c.id_cliente WHERE pf.id_cliente = ?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, id);
+		ResultSet rs = stmt.executeQuery();
+
+		if (rs.next()) {
+			PessoaFisica pessoaFisica = new PessoaFisica();
+
+			pessoaFisica.setCpf(rs.getString("cpf_cliente"));
+			pessoaFisica.setNome(rs.getString("nome"));
+
+			pessoaFisica.setIdCliente(rs.getInt("id_cliente"));
+			pessoaFisica.setTelefone(rs.getString("telefone_cliente"));
+			pessoaFisica.setEmail(rs.getString("email_cliente"));
+			return pessoaFisica;
+		}
+
+		return null;
+	}
+
+	public void atualizar(PessoaFisica pessoaFisica) throws SQLException {
+		String sql = "UPDATE pf SET cpf_cliente = ?, nome = ? WHERE id_cliente = ?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, pessoaFisica.getCpf());
+		stmt.setString(2, pessoaFisica.getNome());
+		stmt.setInt(3, pessoaFisica.getIdCliente());
+		stmt.executeUpdate();
+		stmt.close();
+	}
 
 	public void deletar(int id) throws SQLException {
 		// not used
 	}
-    
+
 }
 

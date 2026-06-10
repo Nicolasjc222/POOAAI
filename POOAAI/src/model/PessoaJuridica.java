@@ -3,17 +3,17 @@ package model;
 public class PessoaJuridica extends Cliente{
 	private String razaoSocial;
 	private String cnpj;
-	
+
 	public PessoaJuridica(String razaoSocial,String cnpj) {
 		super();
 		this.razaoSocial = razaoSocial;
 		this.cnpj = cnpj;
 	}
-	
+
 	public PessoaJuridica() {
 		super();
 	}
-	
+
 	public String getRazaoSocial() {
 		return razaoSocial;
 	}
