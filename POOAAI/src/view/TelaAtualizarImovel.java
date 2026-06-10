@@ -6,11 +6,14 @@ import controller.EnderecoController;
 import controller.ImovelController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -20,211 +23,183 @@ import model.Imovel;
 
 public class TelaAtualizarImovel {
 
-	private TextField tfIdImovel;
-	private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
-	private TextField tfTipoPropriedade, tfArea, tfValor, tfComodos;
-	private Label lblErro;
-	private Imovel imovelProcurado;
+    private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
+    private TextField tfTipoPropriedade, tfArea, tfValor, tfComodos;
+    private ComboBox<String> cbFinalidade; 
+    private Label lblErro;
+    private Imovel imovelProcurado; // Imóvel carregado da tabela
 
-	private ImovelController imovelCtrl;
-	private EnderecoController enderecoCtrl;
+    private ImovelController imovelCtrl;
+    private EnderecoController enderecoCtrl;
 
-	public Scene getScene() {
-		VBox root = new VBox(20);
-		root.setAlignment(Pos.CENTER);
-		root.setPadding(new Insets(40));
-		root.setStyle("-fx-background-color: linear-gradient(to bottom, #e3f2fd, #f5f5f5);");
+    // Agora retorna um Region e recebe o imóvel selecionado
+    public Region getLayout(Imovel imovelCompleto) {
+        this.imovelProcurado = imovelCompleto;
 
-		Label lblTitulo = new Label("Atualizar Imóveis");
-		lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-		lblTitulo.setTextFill(Color.DARKBLUE);
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.TOP_LEFT);
+        root.setPadding(new Insets(40));
 
-		Button btnVoltar = new Button("Voltar");
-		btnVoltar.setPrefWidth(150);
-		btnVoltar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		btnVoltar.setStyle("-fx-background-color: #0c27f0; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-		btnVoltar.setOnAction(e -> {
-		TelaDashboard.mudarConteudo(new TelaGerenciarImoveis().getLayout());
-		});
+        Label lblTitulo = new Label("Atualizar Imóvel");
+        lblTitulo.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
+        lblTitulo.setTextFill(Color.valueOf("#2C3E50"));
 
-		Label lblIdImovel = new Label("ID Imovel:");
-		lblIdImovel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        VBox cardForm = new VBox(20);
+        cardForm.setPadding(new Insets(30));
+        cardForm.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");
 
-		tfIdImovel = new TextField(); tfIdImovel.setPromptText("ID do cliente a ser editado");
+        // --- Seção Endereço ---
+        Label lblEndereco = new Label("Endereço:");
+        lblEndereco.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-		VBox vboxIdImovel = new VBox(10, lblIdImovel, tfIdImovel);
-		vboxIdImovel.setAlignment(Pos.CENTER);
+        tfCep = new TextField(); tfCep.setPromptText("00000-000");
+        tfRua = new TextField(); tfRua.setPromptText("Digite a rua");
+        tfNumero = new TextField(); tfNumero.setPromptText("Número");
+        tfBairro = new TextField(); tfBairro.setPromptText("Bairro");
+        tfCidade = new TextField(); tfCidade.setPromptText("Cidade");
+        tfUF = new TextField(); tfUF.setPromptText("UF");
+        tfComplemento = new TextField(); tfComplemento.setPromptText("Complemento (opcional)");
 
-		Button btnVerificarId = new Button("Verificar");
-		btnVerificarId.setPrefWidth(150);
-		btnVerificarId.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		btnVerificarId.setStyle("-fx-background-color: #b515e6; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-		btnVerificarId.setOnAction(e -> {
-			if(verificarId()) {
-				// --- Seção Endereço ---
-				Label lblEndereco = new Label("Endereço:");
-				lblEndereco.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        // Preenche os dados do endereço
+        if (imovelProcurado.getEndereco() != null) {
+            tfCep.setText(imovelProcurado.getEndereco().getCep());
+            tfRua.setText(imovelProcurado.getEndereco().getRua());
+            tfNumero.setText(String.valueOf(imovelProcurado.getEndereco().getNumero()));
+            tfBairro.setText(imovelProcurado.getEndereco().getBairro());
+            tfCidade.setText(imovelProcurado.getEndereco().getCidade());
+            tfUF.setText(imovelProcurado.getEndereco().getUf());
+            tfComplemento.setText(imovelProcurado.getEndereco().getComplemento());
+        }
 
-				tfCep         = new TextField(); tfCep.setPromptText("00000-000"); tfCep.setText(imovelProcurado.getEndereco().getCep());
-				tfRua         = new TextField(); tfRua.setPromptText("Digite a rua"); tfRua.setText(imovelProcurado.getEndereco().getRua());
-				tfNumero      = new TextField(); tfNumero.setPromptText("Número"); tfNumero.setText(String.valueOf(imovelProcurado.getEndereco().getNumero()));
-				tfBairro      = new TextField(); tfBairro.setPromptText("Bairro"); tfBairro.setText(imovelProcurado.getEndereco().getBairro());
-				tfCidade      = new TextField(); tfCidade.setPromptText("Cidade"); tfCidade.setText(imovelProcurado.getEndereco().getCidade());
-				tfUF          = new TextField(); tfUF.setPromptText("UF"); tfUF.setText(imovelProcurado.getEndereco().getUf());
-				tfComplemento = new TextField(); tfComplemento.setPromptText("Complemento (opcional)"); tfComplemento.setText(imovelProcurado.getEndereco().getComplemento());
+        GridPane gridEndereco = new GridPane();
+        gridEndereco.setHgap(10); gridEndereco.setVgap(12);
+        gridEndereco.add(new Label("CEP:"), 0, 0); gridEndereco.add(tfCep, 1, 0);
+        gridEndereco.add(new Label("Rua:"), 2, 0); gridEndereco.add(tfRua, 3, 0);
+        gridEndereco.add(new Label("Número:"), 0, 1); gridEndereco.add(tfNumero, 1, 1);
+        gridEndereco.add(new Label("Bairro:"), 2, 1); gridEndereco.add(tfBairro, 3, 1);
+        gridEndereco.add(new Label("Cidade:"), 0, 2); gridEndereco.add(tfCidade, 1, 2);
+        gridEndereco.add(new Label("UF:"), 2, 2); gridEndereco.add(tfUF, 3, 2);
+        gridEndereco.add(new Label("Complemento:"), 0, 3); gridEndereco.add(tfComplemento, 1, 3);
 
-				GridPane gridEndereco = new GridPane();
-				gridEndereco.setHgap(10);
-				gridEndereco.setVgap(12);
-				gridEndereco.setAlignment(Pos.CENTER_LEFT);
-				gridEndereco.add(new Label("CEP:"),         0, 0); gridEndereco.add(tfCep,         1, 0);
-				gridEndereco.add(new Label("Rua:"),         2, 0); gridEndereco.add(tfRua,         3, 0);
-				gridEndereco.add(new Label("Número:"),      0, 1); gridEndereco.add(tfNumero,      1, 1);
-				gridEndereco.add(new Label("Bairro:"),      2, 1); gridEndereco.add(tfBairro,      3, 1);
-				gridEndereco.add(new Label("Cidade:"),      0, 2); gridEndereco.add(tfCidade,      1, 2);
-				gridEndereco.add(new Label("UF:"),          2, 2); gridEndereco.add(tfUF,          3, 2);
-				gridEndereco.add(new Label("Complemento:"), 0, 3); gridEndereco.add(tfComplemento, 1, 3);
+        VBox vboxEndereco = new VBox(10, lblEndereco, gridEndereco);
 
-				VBox vboxEndereco = new VBox(10, lblEndereco, gridEndereco);
-				vboxEndereco.setAlignment(Pos.CENTER);
+        // --- Seção Dados do Imóvel ---
+        Label lblDadosImovel = new Label("Características:");
+        lblDadosImovel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-				// --- Seção Imóvel ---
-				Label lblDadosImovel = new Label("Dados do Imóvel:");
-				lblDadosImovel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        tfTipoPropriedade = new TextField(); tfTipoPropriedade.setText(imovelProcurado.getTipoPropriedade());
+        tfArea = new TextField(); tfArea.setText(String.valueOf(imovelProcurado.getArea()));
+        tfValor = new TextField(); tfValor.setText(String.valueOf(imovelProcurado.getValor()));
+        tfComodos = new TextField(); tfComodos.setText(String.valueOf(imovelProcurado.getComodos()));
+        
+        cbFinalidade = new ComboBox<>();
+        cbFinalidade.getItems().addAll("Venda", "Aluguel");
+        cbFinalidade.setValue(imovelProcurado.getFinalidade()); 
 
-				tfTipoPropriedade = new TextField(); tfTipoPropriedade.setPromptText("Apartamento, Casa..."); tfTipoPropriedade.setText(imovelProcurado.getTipoPropriedade());
-				tfArea            = new TextField(); tfArea.setPromptText("Área em m²"); tfArea.setText(String.valueOf(imovelProcurado.getArea()));
-				tfValor           = new TextField(); tfValor.setPromptText("Valor em R$"); tfValor.setText(String.valueOf(imovelProcurado.getValor()));
-				tfComodos         = new TextField(); tfComodos.setPromptText("Quantidade de cômodos"); tfComodos.setText(String.valueOf(imovelProcurado.getComodos()));
+        GridPane gridImovel = new GridPane();
+        gridImovel.setHgap(10); gridImovel.setVgap(12);
+        gridImovel.add(new Label("Tipo:"), 0, 0); gridImovel.add(tfTipoPropriedade, 1, 0);
+        gridImovel.add(new Label("Área:"), 2, 0); gridImovel.add(tfArea, 3, 0);
+        gridImovel.add(new Label("Valor:"), 0, 1); gridImovel.add(tfValor, 1, 1);
+        gridImovel.add(new Label("Cômodos:"), 2, 1); gridImovel.add(tfComodos, 3, 1);
+        gridImovel.add(new Label("Finalidade:"), 0, 2); gridImovel.add(cbFinalidade, 1, 2);
 
-				GridPane gridImovel = new GridPane();
-				gridImovel.setHgap(10);
-				gridImovel.setVgap(12);
-				gridImovel.setAlignment(Pos.CENTER_LEFT);
-				gridImovel.add(new Label("Tipo:"),     0, 0); gridImovel.add(tfTipoPropriedade, 1, 0); 
-				gridImovel.add(new Label("Área:"),     0, 1); gridImovel.add(tfArea,            1, 1);
-				gridImovel.add(new Label("Valor:"),    0, 2); gridImovel.add(tfValor,           1, 2);
-				gridImovel.add(new Label("Cômodos:"),  0, 3); gridImovel.add(tfComodos,         1, 3);
+        VBox vboxImovel = new VBox(10, lblDadosImovel, gridImovel);
 
-				VBox vboxImovel = new VBox(10, lblDadosImovel, gridImovel);
-				vboxImovel.setAlignment(Pos.CENTER);
+        lblErro = new Label();
+        lblErro.setFont(Font.font(12));
 
-				// --- Botão e erro ---
-				Button btnSalvar = new Button("Salvar");
-				btnSalvar.setPrefWidth(150);
-				btnSalvar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-				btnSalvar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-				btnSalvar.setOnAction(er -> {
-					try {
-						handleAtualizar();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-				});
+        // --- Botões ---
+        Button btnSalvar = new Button("Salvar Alterações");
+        btnSalvar.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
+        btnSalvar.setOnAction(e -> {
+            try {
+                handleAtualizar();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
 
-				Button btnLimpar = new Button("Limpar");
-				btnLimpar.setPrefWidth(150);
-				btnLimpar.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-				btnLimpar.setStyle("-fx-background-color: #e3f542; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10 20;");
-				btnLimpar.setOnAction(er -> {
-					limparCampos();
-				});
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setStyle("-fx-background-color: #7F8C8D; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
+        btnCancelar.setOnAction(e -> {
+            TelaDashboard.mudarConteudo(new TelaGerenciarImoveis().getLayout());
+        });
 
-				lblErro = new Label();
-				lblErro.setTextFill(Color.RED);
-				lblErro.setFont(Font.font(12));
-				root.getChildren().clear();
-				root.getChildren().addAll(lblTitulo, vboxIdImovel, btnVerificarId, vboxEndereco, vboxImovel, btnSalvar, btnLimpar, btnVoltar, lblErro);
-			}
-		});
+        HBox hboxBotoes = new HBox(15, btnSalvar, btnCancelar, lblErro);
+        hboxBotoes.setAlignment(Pos.CENTER_LEFT);
 
-		lblErro = new Label();
-		lblErro.setTextFill(Color.RED);
-		lblErro.setFont(Font.font(12));
-		root.getChildren().addAll(lblTitulo, vboxIdImovel, btnVerificarId, btnVoltar, lblErro);
-		return new Scene(root, 800, 600);
-	}
+        cardForm.getChildren().addAll(vboxEndereco, vboxImovel, hboxBotoes);
+        root.getChildren().addAll(lblTitulo, cardForm);
 
-	private boolean validarCampos() {
-		boolean numeroOk, areaOk, valorOk, comodosOk;
+        ScrollPane scroll = new ScrollPane(root);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color: transparent; -fx-background: #F4F6F8;");
 
-		try { Integer.parseInt(tfNumero.getText().trim()); numeroOk = true; }
-		catch (NumberFormatException e) { numeroOk = false; }
+        return scroll;
+    }
 
-		try { Integer.parseInt(tfArea.getText().trim());   areaOk   = true; }
-		catch (NumberFormatException e) { areaOk   = false; }
+    private boolean validarCampos() {
+        boolean numerosOk;
+        try {
+            Integer.parseInt(tfNumero.getText().trim());
+            Integer.parseInt(tfArea.getText().trim());
+            Integer.parseInt(tfValor.getText().trim());
+            Integer.parseInt(tfComodos.getText().trim());
+            numerosOk = true;
+        } catch (NumberFormatException e) {
+            numerosOk = false;
+        }
 
-		try { Integer.parseInt(tfValor.getText().trim());  valorOk  = true; }
-		catch (NumberFormatException e) { valorOk  = false; }
+        return !tfRua.getText().trim().isEmpty() &&
+                !tfBairro.getText().trim().isEmpty() &&
+                !tfCidade.getText().trim().isEmpty() &&
+                tfUF.getText().trim().length() == 2 &&
+                tfCep.getText().trim().length() == 8 &&
+                !tfTipoPropriedade.getText().trim().isEmpty() &&
+                cbFinalidade.getValue() != null &&
+                numerosOk;
+    }
 
-		try { Integer.parseInt(tfComodos.getText().trim()); comodosOk = true; }
-		catch (NumberFormatException e) { comodosOk = false; }
+    private void handleAtualizar() throws SQLException {
+        lblErro.setText("");
+        if (validarCampos()) {
+            int numero = Integer.parseInt(tfNumero.getText().trim());
+            int area = Integer.parseInt(tfArea.getText().trim());
+            int valor = Integer.parseInt(tfValor.getText().trim());
+            int comodos = Integer.parseInt(tfComodos.getText().trim());
 
-		return !tfRua.getText().trim().isEmpty() &&
-				!tfBairro.getText().trim().isEmpty() &&
-				!tfCidade.getText().trim().isEmpty() &&
-				!tfTipoPropriedade.getText().trim().isEmpty() &&
-				tfUF.getText().trim().length() == 2 &&
-				tfCep.getText().trim().length() == 8 &&
-				numeroOk && areaOk && valorOk && comodosOk;
-	}
+            Endereco endereco = imovelProcurado.getEndereco();
+            endereco.setRua(tfRua.getText().trim());
+            endereco.setBairro(tfBairro.getText().trim());
+            endereco.setCidade(tfCidade.getText().trim());
+            endereco.setUf(tfUF.getText().trim());
+            endereco.setCep(tfCep.getText().trim());
+            endereco.setNumero(numero);
+            endereco.setComplemento(tfComplemento.getText().trim());
+            
+            enderecoCtrl = new EnderecoController(endereco);
+            enderecoCtrl.atualizarEndereco();
 
-	private void handleAtualizar() throws SQLException {
-		lblErro.setText("");
-		if (validarCampos()) {
-			int numero = Integer.parseInt(tfNumero.getText().trim());
-			int area   = Integer.parseInt(tfArea.getText().trim());
-			int valor  = Integer.parseInt(tfValor.getText().trim());
-			int comodos = Integer.parseInt(tfComodos.getText().trim());
+            imovelProcurado.setTipoPropriedade(tfTipoPropriedade.getText().trim());
+            imovelProcurado.setArea(area);
+            imovelProcurado.setValor(valor);
+            imovelProcurado.setComodos(comodos);
+            imovelProcurado.setFinalidade(cbFinalidade.getValue());
+            
+            imovelCtrl = new ImovelController(imovelProcurado);
+            imovelCtrl.atualizarImovel();
 
-			Endereco endereco = new Endereco(
-					tfRua.getText().trim(), tfBairro.getText().trim(),
-					tfCidade.getText().trim(), tfUF.getText().trim(),
-					tfCep.getText().trim(), numero, tfComplemento.getText().trim()
-					);
-			endereco.setIdEndereco(imovelProcurado.getEndereco().getIdEndereco());
-			enderecoCtrl = new EnderecoController(endereco);
-			enderecoCtrl.atualizarEndereco();
-
-			Imovel imovel = new Imovel(endereco, tfTipoPropriedade.getText().trim(), area, valor, comodos);
-			imovel.setIdImovel(imovelProcurado.getIdImovel());
-			imovelCtrl = new ImovelController(imovel);
-			imovelCtrl.atualizarImovel();
-
-			lblErro.setTextFill(Color.GREEN);
-			lblErro.setText("Cadastro realizado com sucesso!");
-			limparCampos();
-		} else {
-			lblErro.setTextFill(Color.RED);
-			lblErro.setText("Por favor, preencha todos os campos corretamente!");
-		}
-	}
-
-	private void limparCampos() {
-		tfRua.setText("");
-		tfCep.setText("");
-		tfCidade.setText("");
-		tfBairro.setText("");
-		tfUF.setText("");
-		tfNumero.setText("");
-		tfComplemento.setText("");
-		tfTipoPropriedade.setText("");
-		tfArea.setText("");
-		tfValor.setText("");
-		tfComodos.setText("");
-	}
-	
-	private boolean verificarId() {
-		boolean idOk;
-		try {
-			int idImovel = Integer.parseInt(tfIdImovel.getText().trim());
-			Imovel imovel = new Imovel();
-			imovel.setIdImovel(idImovel);
-			imovelCtrl = new ImovelController(imovel);
-			imovelProcurado = imovelCtrl.procurarImovel();
-			idOk = true;
-
-		} catch (NumberFormatException e) { idOk = false; }
-		return idOk;
-	}
+            lblErro.setTextFill(Color.GREEN);
+            lblErro.setText("Cadastro atualizado com sucesso!");
+            
+            // Volta para a tabela de gerenciar imóveis automaticamente
+            javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1.5));
+            delay.setOnFinished(event -> TelaDashboard.mudarConteudo(new TelaGerenciarImoveis().getLayout()));
+            delay.play();
+        } else {
+            lblErro.setTextFill(Color.RED);
+            lblErro.setText("Por favor, preencha todos os campos corretamente!");
+        }
+    }
 }

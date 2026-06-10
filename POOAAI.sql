@@ -34,6 +34,7 @@ CREATE TABLE imovel
 	comodos_imovel smallint NOT NULL,
 	data_insercao DATETIME DEFAULT GETDATE(),
 	data_atualizacao DATETIME DEFAULT GETDATE(),
+	finalidade VARCHAR(20) NOT NULL DEFAULT 'Venda',
 	CONSTRAINT pk_id_imovel PRIMARY KEY (id_imovel),
 	CONSTRAINT fk_endereco_imovel FOREIGN KEY (id_endereco) REFERENCES endereco(id_endereco),
 	CONSTRAINT uk_endereco_imovel UNIQUE (id_endereco)

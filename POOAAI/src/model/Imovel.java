@@ -8,7 +8,8 @@ public class Imovel {
 	private int area;
 	private int valor;
 	private int comodos;
-	
+    private String finalidade;
+
 	
 	//Construtor
 	public Imovel(Endereco endereco, String tipoPropriedade, int area, int valor, int comodos) {
@@ -73,5 +74,14 @@ public class Imovel {
 	public void setComodos(int comodos) {
 		this.comodos = comodos;
 	}
+	
+	// Adicione lá embaixo nos getters e setters:
+    public String getFinalidade() {
+        return finalidade;
+    }
+
+    public void setFinalidade(String finalidade) {
+        this.finalidade = finalidade;
+    }
 	
 }

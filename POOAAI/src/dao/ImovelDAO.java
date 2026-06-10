@@ -16,13 +16,14 @@ public class ImovelDAO implements ICrudDAO<Imovel>{
     }
 
     public void inserir(Imovel imovel) throws SQLException {
-        String sql = "INSERT INTO imovel (tipo_imovel, area_imovel, valor_imovel, comodos_imovel, id_endereco) VALUES (?, ?, ?, ?, ?)"; // trocara para imvovel
+        String sql = "INSERT INTO imovel (tipo_imovel, area_imovel, valor_imovel, comodos_imovel, finalidade, id_endereco) VALUES (?, ?, ?, ?, ?, ?)"; // trocara para imvovel
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, imovel.getTipoPropriedade());
         stmt.setInt(2, imovel.getArea());
         stmt.setInt(3, imovel.getValor());
         stmt.setInt(4, imovel.getComodos());
-        stmt.setInt(5, imovel.getEndereco().getIdEndereco());
+        stmt.setString(5,imovel.getFinalidade());
+        stmt.setInt(6, imovel.getEndereco().getIdEndereco());
 
         stmt.executeUpdate();
         stmt.close();
@@ -42,6 +43,7 @@ public class ImovelDAO implements ICrudDAO<Imovel>{
         	imovel.setArea(rs.getInt("area_imovel"));
         	imovel.setValor(rs.getInt("valor_imovel"));
         	imovel.setComodos(rs.getInt("comodos_imovel"));
+        	imovel.setFinalidade(rs.getString("finalidade"));
         	enderecoDAO = new EnderecoDAO(conn);
         	Endereco endereco = enderecoDAO.buscarPorId(rs.getInt("id_endereco"));
         	imovel.setEndereco(endereco);
@@ -64,6 +66,7 @@ public class ImovelDAO implements ICrudDAO<Imovel>{
         	imovel.setTipoPropriedade(rs.getString("tipo_imovel"));
         	imovel.setArea(rs.getInt("area_imovel"));
         	imovel.setValor(rs.getInt("valor_imovel"));
+        	imovel.setFinalidade(rs.getString("finalidade"));
         	imovel.setComodos(rs.getInt("comodos_imovel"));
         	enderecoDAO = new EnderecoDAO(conn);
         	Endereco endereco = enderecoDAO.buscarPorId(rs.getInt("id_endereco"));
@@ -75,14 +78,15 @@ public class ImovelDAO implements ICrudDAO<Imovel>{
     }
     
     public void atualizar(Imovel imovel) throws SQLException {
-        String sql = "UPDATE imovel SET tipo_imovel = ?, area_imovel = ?, valor_imovel = ?, comodos_imovel = ?, id_endereco = ? WHERE id_imovel = ?";
+        String sql = "UPDATE imovel SET tipo_imovel = ?, area_imovel = ?, valor_imovel = ?, comodos_imovel = ?,finalidade = ?, id_endereco = ? WHERE id_imovel = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, imovel.getTipoPropriedade());
         stmt.setInt(2, imovel.getArea());
         stmt.setInt(3, imovel.getValor());
         stmt.setInt(4, imovel.getComodos());
-        stmt.setInt(5, imovel.getEndereco().getIdEndereco());
-        stmt.setInt(6, imovel.getIdImovel());
+        stmt.setString(5,imovel.getFinalidade());
+        stmt.setInt(6, imovel.getEndereco().getIdEndereco());
+        stmt.setInt(7, imovel.getIdImovel());
         stmt.executeUpdate();
         stmt.close();
     }

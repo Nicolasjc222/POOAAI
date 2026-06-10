@@ -61,10 +61,12 @@ public class ClienteDAO implements ICrudDAO<Cliente> {
         List<Cliente> lista = new ArrayList<>();
         
         // SQL unificado trazendo os campos específicos das tabelas filhas
-        String sql = "SELECT c.*, pf.nome, pj.razao_social " +
-                     "FROM cliente c " +
-                     "LEFT JOIN pf ON c.id_cliente = pf.id_cliente " +
-                     "LEFT JOIN pj ON c.id_cliente = pj.id_cliente";
+        String sql = "SELECT c.*, pf.nome, pj.razao_social, " +
+                "e.rua_endereco, e.bairro_endereco, e.cidade_endereco, e.UF_endereco, e.numero_endereco " +
+                "FROM cliente c " +
+                "LEFT JOIN pf ON c.id_cliente = pf.id_cliente " +
+                "LEFT JOIN pj ON c.id_cliente = pj.id_cliente " +
+                "LEFT JOIN endereco e ON c.id_endereco = e.id_endereco";
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -89,7 +91,14 @@ public class ClienteDAO implements ICrudDAO<Cliente> {
                 cliente.setTelefone(rs.getString("telefone_cliente")); 
                 cliente.setEmail(rs.getString("email_cliente"));
                 cliente.setTipoCliente(tipo);
-                
+                Endereco end = new Endereco();
+                end.setIdEndereco(rs.getInt("id_endereco"));
+                end.setRua(rs.getString("rua_endereco"));
+                end.setBairro(rs.getString("bairro_endereco"));
+                end.setCidade(rs.getString("cidade_endereco"));
+                end.setUf(rs.getString("UF_endereco"));
+                end.setNumero(rs.getInt("numero_endereco"));
+                cliente.setEndereco(end);
                 lista.add(cliente);
             }
         }

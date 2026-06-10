@@ -1,26 +1,27 @@
 package view;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import controller.ClienteController;
-import controller.EnderecoController;
 import controller.PessoaFisicaController;
 import controller.PessoaJuridicaController;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.Hyperlink;
-import model.PessoaFisica;
-import model.PessoaJuridica;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -28,11 +29,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Popup;
 import model.Cliente;
+import model.Endereco;
+import model.PessoaFisica;
+import model.PessoaJuridica;
 
 public class TelaGerenciarClientes {
 
     private TableView<Cliente> tabelaClientes;
+    private ObservableList<Cliente> dadosMaster;
+    private FilteredList<Cliente> dadosFiltrados;
+    private final Map<String, String> filtrosAtivos = new HashMap<>();
 
     public Region getLayout() {
         VBox root = new VBox(25);
@@ -44,16 +52,12 @@ public class TelaGerenciarClientes {
         lblTitulo.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
         lblTitulo.setTextFill(Color.valueOf("#2C3E50"));
 
-        // Espaçador dinâmico para empurrar o botão para a extremidade direita
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Botão para abrir o formulário de cadastro existente
         Button btnNovoCliente = new Button("+ Novo Cliente");
         btnNovoCliente.setFont(Font.font("Segoe UI", FontWeight.BOLD, 14));
         btnNovoCliente.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;");
-        
-        // Ação do botão: Chama a tela de cadastro que você já tem pronta!
         btnNovoCliente.setOnAction(e -> {
             TelaCadastroCliente telaCadastro = new TelaCadastroCliente();
             TelaDashboard.mudarConteudo(telaCadastro.getLayout());
@@ -62,7 +66,7 @@ public class TelaGerenciarClientes {
         HBox header = new HBox(20, lblTitulo, spacer, btnNovoCliente);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        // --- TABELA DE DADOS (Envolvida em um Card Branco) ---
+        // --- TABELA ---
         VBox cardTabela = new VBox();
         cardTabela.setPadding(new Insets(20));
         cardTabela.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);");
@@ -71,34 +75,51 @@ public class TelaGerenciarClientes {
         tabelaClientes.setPrefHeight(450);
         tabelaClientes.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #E2E8F0;");
 
-        // --- 1. COLUNA NOME / RAZÃO SOCIAL (PURAMENTE VISUAL) ---
+        // --- COLUNA NOME / RAZÃO SOCIAL ---
         TableColumn<Cliente, String> colNome = new TableColumn<>("Nome / Razão Social");
         colNome.setPrefWidth(220);
         colNome.setCellValueFactory(cellData -> {
             Cliente c = cellData.getValue();
-            // Lógica dinâmica baseada no tipo real do objeto
-            if (c instanceof PessoaFisica) {
-                return new SimpleStringProperty(((PessoaFisica) c).getNome());
-            } else if (c instanceof PessoaJuridica) {
-                return new SimpleStringProperty(((PessoaJuridica) c).getRazaoSocial());
+            if (c instanceof PessoaFisica pf) {
+                return new SimpleStringProperty(pf.getNome());
+            } else if (c instanceof PessoaJuridica pj) {
+                return new SimpleStringProperty(pj.getRazaoSocial());
             }
-            return new SimpleStringProperty(""); // Fallback caso seja um cliente genérico
+            return new SimpleStringProperty("");
         });
 
-        // --- COLUNAS QUE VOCÊ JÁ TINHA ---
+        // --- COLUNA TIPO ---
         TableColumn<Cliente, String> colTipo = new TableColumn<>("Tipo");
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoCliente"));
         colTipo.setPrefWidth(80);
+        colTipo.setCellValueFactory(cellData ->
+            new SimpleStringProperty(cellData.getValue().getTipoCliente())
+        );
 
-        TableColumn<Cliente, Integer> colTelefone = new TableColumn<>("Telefone");
-        colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefone"));
-        colTelefone.setPrefWidth(120);
+        // --- COLUNA TELEFONE ---
+        TableColumn<Cliente, String> colTelefone = new TableColumn<>("Telefone");
+        colTelefone.setPrefWidth(140);
+        colTelefone.setCellValueFactory(cellData ->
+            new SimpleStringProperty(cellData.getValue().getTelefone())
+        );
 
+        // --- COLUNA EMAIL ---
         TableColumn<Cliente, String> colEmail = new TableColumn<>("Email");
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colEmail.setPrefWidth(180);
+        colEmail.setPrefWidth(200);
+        colEmail.setCellValueFactory(cellData ->
+            new SimpleStringProperty(cellData.getValue().getEmail())
+        );
 
-        // --- 2. COLUNA DE AÇÕES (EDITAR E EXCLUIR COMO LINKS) ---
+        // --- COLUNA ENDEREÇO COMPLETO ---
+        TableColumn<Cliente, String> colEndereco = new TableColumn<>("Endereço");
+        colEndereco.setPrefWidth(280);
+        colEndereco.setCellValueFactory(cellData -> {
+            Endereco e = cellData.getValue().getEndereco();
+            if (e == null) return new SimpleStringProperty("N/A");
+            String completo = e.getRua() + ", " + e.getNumero() + " - " + e.getBairro() + ", " + e.getCidade() + " / " + e.getUf();
+            return new SimpleStringProperty(completo);
+        });
+
+        // --- COLUNA AÇÕES ---
         TableColumn<Cliente, Void> colAcoes = new TableColumn<>("Ações");
         colAcoes.setPrefWidth(150);
         colAcoes.setCellFactory(param -> new TableCell<>() {
@@ -107,7 +128,6 @@ public class TelaGerenciarClientes {
             private final HBox container = new HBox(12, linkEditar, linkExcluir);
 
             {
-                // Estilização para parecerem links da Web modernos
                 linkEditar.setStyle("-fx-text-fill: #2980b9; -fx-font-weight: bold; -fx-underline: true;");
                 linkExcluir.setStyle("-fx-text-fill: #c0392b; -fx-font-weight: bold; -fx-underline: true;");
                 container.setAlignment(Pos.CENTER);
@@ -116,7 +136,6 @@ public class TelaGerenciarClientes {
                     Cliente clienteSelecionado = getTableView().getItems().get(getIndex());
                     handleEditar(clienteSelecionado);
                 });
-
                 linkExcluir.setOnAction(event -> {
                     Cliente clienteSelecionado = getTableView().getItems().get(getIndex());
                     handleExcluir(clienteSelecionado);
@@ -126,25 +145,30 @@ public class TelaGerenciarClientes {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(container);
-                }
+                setGraphic(empty ? null : container);
             }
         });
 
-        // Adiciona todas as colunas na tabela respeitando a nova ordem
-        tabelaClientes.getColumns().addAll(colNome, colTipo, colTelefone, colEmail, colAcoes);
-        
+        // --- ADICIONA COLUNAS ---
+        tabelaClientes.getColumns().add(colNome);
+        tabelaClientes.getColumns().add(colTipo);
+        tabelaClientes.getColumns().add(colTelefone);
+        tabelaClientes.getColumns().add(colEmail);
+        tabelaClientes.getColumns().add(colEndereco);
+        tabelaClientes.getColumns().add(colAcoes);
+
+        // --- APLICA FILTROS NAS COLUNAS ---
+        adicionarFiltroColuna(colNome,     "nome");
+        adicionarFiltroColuna(colTipo,     "tipo");
+        adicionarFiltroColuna(colTelefone, "telefone");
+        adicionarFiltroColuna(colEmail,    "email");
+        adicionarFiltroColuna(colEndereco, "endereco");
+
         cardTabela.getChildren().add(tabelaClientes);
-        
         root.getChildren().addAll(header, cardTabela);
 
-        // Carrega os dados iniciais do banco
         carregarDadosBanco();
 
-        // ScrollPane para garantir responsividade vertical se necessário
         ScrollPane scroll = new ScrollPane(root);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: #F4F6F8;");
@@ -152,85 +176,184 @@ public class TelaGerenciarClientes {
         return scroll;
     }
 
+    // -----------------------------------------------------------------------
+    // Filtro por coluna
+    // -----------------------------------------------------------------------
+
+    private <T> void adicionarFiltroColuna(TableColumn<Cliente, T> coluna, String chave) {
+        // Guarda o texto original do cabeçalho para montar o HBox
+        String labelTexto = coluna.getText();
+
+        Label lblNome = new Label(labelTexto);
+        lblNome.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
+
+        // Ponto azul que aparece quando o filtro está ativo
+        Label indicador = new Label("●");
+        indicador.setStyle("-fx-text-fill: #2980b9; -fx-font-size: 9px;");
+        indicador.setVisible(false);
+
+        Button btnFiltro = new Button("▼");
+        btnFiltro.setStyle("-fx-background-color: transparent; -fx-padding: 0 3; -fx-cursor: hand; -fx-font-size: 9px; -fx-text-fill: #7f8c8d;");
+
+        HBox cabecalho = new HBox(5, lblNome, indicador, btnFiltro);
+        cabecalho.setAlignment(Pos.CENTER_LEFT);
+
+        coluna.setText("");
+        coluna.setGraphic(cabecalho);
+
+        btnFiltro.setOnAction(e -> {
+            // --- Conteúdo do popup ---
+            TextField campo = new TextField(filtrosAtivos.getOrDefault(chave, ""));
+            campo.setPromptText("Filtrar por " + labelTexto + "...");
+            campo.setPrefWidth(200);
+            campo.setStyle("-fx-font-size: 13px;");
+
+            Button btnLimpar = new Button("✕  Limpar filtro");
+            btnLimpar.setStyle("-fx-background-color: transparent; -fx-text-fill: #c0392b; -fx-cursor: hand; -fx-font-size: 12px; -fx-padding: 4 0 0 0;");
+
+            VBox conteudoPopup = new VBox(6, campo, btnLimpar);
+            conteudoPopup.setPadding(new Insets(10));
+            conteudoPopup.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #CBD5E0;" +
+                "-fx-border-radius: 6;" +
+                "-fx-background-radius: 6;"
+            );
+
+            Popup popup = new Popup();
+            popup.setAutoHide(true);
+            popup.getContent().add(conteudoPopup);
+
+            // Listener: filtra enquanto digita
+            campo.textProperty().addListener((obs, antigo, novo) -> {
+                if (novo == null || novo.isBlank()) {
+                    filtrosAtivos.remove(chave);
+                    indicador.setVisible(false);
+                    btnFiltro.setStyle("-fx-background-color: transparent; -fx-padding: 0 3; -fx-cursor: hand; -fx-font-size: 9px; -fx-text-fill: #7f8c8d;");
+                } else {
+                    filtrosAtivos.put(chave, novo.toLowerCase());
+                    indicador.setVisible(true);
+                    btnFiltro.setStyle("-fx-background-color: transparent; -fx-padding: 0 3; -fx-cursor: hand; -fx-font-size: 9px; -fx-text-fill: #2980b9;");
+                }
+                reaplicarFiltros();
+            });
+
+            btnLimpar.setOnAction(ev -> {
+                filtrosAtivos.remove(chave);
+                indicador.setVisible(false);
+                btnFiltro.setStyle("-fx-background-color: transparent; -fx-padding: 0 3; -fx-cursor: hand; -fx-font-size: 9px; -fx-text-fill: #7f8c8d;");
+                reaplicarFiltros();
+                popup.hide();
+            });
+
+            // Posiciona o popup logo abaixo do botão
+            Bounds bounds = btnFiltro.localToScreen(btnFiltro.getBoundsInLocal());
+            popup.show(btnFiltro, bounds.getMinX(), bounds.getMaxY() + 4);
+            campo.requestFocus();
+        });
+    }
+
+    private void reaplicarFiltros() {
+        if (dadosFiltrados == null) return;
+
+        dadosFiltrados.setPredicate(cliente -> {
+            for (Map.Entry<String, String> entry : filtrosAtivos.entrySet()) {
+                String chave = entry.getKey();
+                String texto = entry.getValue();
+
+                boolean passou = switch (chave) {
+                    case "nome" -> {
+                        if (cliente instanceof PessoaFisica pf)
+                            yield pf.getNome() != null && pf.getNome().toLowerCase().contains(texto);
+                        else if (cliente instanceof PessoaJuridica pj)
+                            yield pj.getRazaoSocial() != null && pj.getRazaoSocial().toLowerCase().contains(texto);
+                        yield false;
+                    }
+                    case "tipo"     -> cliente.getTipoCliente() != null && cliente.getTipoCliente().toLowerCase().contains(texto);
+                    case "telefone" -> cliente.getTelefone() != null && cliente.getTelefone().toLowerCase().contains(texto);
+                    case "email"    -> cliente.getEmail() != null && cliente.getEmail().toLowerCase().contains(texto);
+                    case "endereco" -> {
+                        Endereco end = cliente.getEndereco();
+                        if (end == null) yield false;
+                        String completo = (end.getRua() + " " + end.getNumero() + " " +
+                                           end.getBairro() + " " + end.getCidade() + " " + end.getUf()).toLowerCase();
+                        yield completo.contains(texto);
+                    }
+                    default -> true;
+                };
+
+                if (!passou) return false; // AND: todos os filtros têm que passar
+            }
+            return true;
+        });
+    }
+
+    // -----------------------------------------------------------------------
+    // Carregamento de dados
+    // -----------------------------------------------------------------------
+
     private void carregarDadosBanco() {
-    	try {
+        try {
             ClienteController c = new ClienteController();
-            
-            // 1. Buscamos os dados no banco e GUARDAMOS na variável
-            // (Estou assumindo que listarClientes() retorna um List<Cliente>)
-            List<Cliente> listaDoBanco = c.listarClientes(); 
-            
-            // 2. Convertendo a lista comum do Java para a lista observável do JavaFX
-            ObservableList<Cliente> dados = FXCollections.observableArrayList(listaDoBanco);
-            
-            // 3. Colocamos os dados REAIS na tabela (adeus, mockup!)
-            tabelaClientes.setItems(dados);
-            
+            List<Cliente> listaDoBanco = c.listarClientes();
+
+            dadosMaster = FXCollections.observableArrayList(listaDoBanco);
+            dadosFiltrados = new FilteredList<>(dadosMaster, p -> true);
+            tabelaClientes.setItems(dadosFiltrados);
+
         } catch (Exception e) {
-            // Se der algum erro de SQL no banco, agora ele vai aparecer no console!
             System.out.println("Erro ao carregar dados na tabela:");
             e.printStackTrace();
         }
     }
-    
- // =========================================================
-    // MÉTODOS DE AÇÃO DOS BOTÕES (LINKS) DA TABELA
-    // =========================================================
 
-    private void handleEditar(Cliente cliente) {
-        Cliente clienteCompleto = null;
+    // -----------------------------------------------------------------------
+    // Ações de editar / excluir
+    // -----------------------------------------------------------------------
 
-        // 1. Usa os controllers específicos que você já tem na estrutura para carregar tudo do banco
-        if ("PF".equals(cliente.getTipoCliente())) {
-            PessoaFisica pfPlaceholder = new PessoaFisica();
-            pfPlaceholder.setIdCliente(cliente.getIdCliente());
-            
-            // Instancia o seu controller de PF
-            PessoaFisicaController pfCtrl = new PessoaFisicaController(pfPlaceholder);
-            clienteCompleto = pfCtrl.procurarPessoaFisica(); // Método que você já tem no controller!
-            
-        } else if ("PJ".equals(cliente.getTipoCliente())) {
-            PessoaJuridica pjPlaceholder = new PessoaJuridica();
-            pjPlaceholder.setIdCliente(cliente.getIdCliente());
-            
-            // Instancia o seu controller de PJ
-            PessoaJuridicaController pjCtrl = new PessoaJuridicaController(pjPlaceholder);
-            clienteCompleto = pjCtrl.procurarPessoaJuridica(); // Método que você já tem no controller!
-        }
-
-        // 2. Busca também o endereço completo usando o seu EnderecoController
-        if (clienteCompleto != null && cliente.getEndereco() != null) {
-            EnderecoController endCtrl = new EnderecoController(cliente.getEndereco());
-            clienteCompleto.setEndereco(endCtrl.procurarEndereco()); // Método que você já tem no controller!
-        }
-
-        // 3. Abre a tela de atualização passando o objeto totalmente preenchido
-        TelaAtualizarCliente telaAtualizar = new TelaAtualizarCliente();
-        Region layoutAtualizacao = telaAtualizar.getLayout(clienteCompleto);
-        
-        // 4. Faz a troca de tela (Usando seu Trocador ou o Dashboard)
-        TelaDashboard.mudarConteudo(layoutAtualizacao); 
-        // ou: Trocador.trocarTela(layoutAtualizacao);
-    }
-
-    private void handleExcluir(Cliente cliente) {
+    private void handleEditar(Cliente clienteSelecionado) {
         try {
-            System.out.println("Tentando excluir o cliente ID: " + cliente.getIdCliente());
-            
-            // 1. Instancia o controller passando o cliente da linha selecionada
-            ClienteController controller = new ClienteController(cliente);
-            
-            // 2. Chama a exclusão no banco de dados
-            controller.deletarCliente();
-            
-            // 3. Recarrega a tabela visualmente para o cliente sumir da interface na mesma hora
-            carregarDadosBanco();
-            
-            System.out.println("Cliente excluído com sucesso da tela e do banco!");
+            ClienteController clienteCtrl = new ClienteController(clienteSelecionado);
+            Cliente clienteCompleto = clienteCtrl.procurarCliente();
+
+            if ("PF".equals(clienteCompleto.getTipoCliente())) {
+                PessoaFisica pf = new PessoaFisica();
+                pf.setIdCliente(clienteCompleto.getIdCliente());
+
+                PessoaFisicaController pfCtrl = new PessoaFisicaController(pf);
+                PessoaFisica pfDoBanco = pfCtrl.procurarPessoaFisica();
+
+                pfDoBanco.setEndereco(clienteCompleto.getEndereco());
+                pfDoBanco.setTelefone(clienteCompleto.getTelefone());
+                pfDoBanco.setEmail(clienteCompleto.getEmail());
+                pfDoBanco.setTipoCliente("PF");
+
+                clienteCompleto = pfDoBanco;
+            } else {
+                PessoaJuridica pj = new PessoaJuridica();
+                pj.setIdCliente(clienteCompleto.getIdCliente());
+
+                PessoaJuridicaController pjCtrl = new PessoaJuridicaController(pj);
+                PessoaJuridica pjDoBanco = pjCtrl.procurarPessoaJuridica();
+
+                pjDoBanco.setEndereco(clienteCompleto.getEndereco());
+                pjDoBanco.setTelefone(clienteCompleto.getTelefone());
+                pjDoBanco.setEmail(clienteCompleto.getEmail());
+                pjDoBanco.setTipoCliente("PJ");
+
+                clienteCompleto = pjDoBanco;
+            }
+
+            TelaAtualizarCliente telaAtualizar = new TelaAtualizarCliente();
+            TelaDashboard.mudarConteudo(telaAtualizar.getLayout(clienteCompleto));
 
         } catch (Exception e) {
-            System.out.println("Erro ao tentar excluir o cliente:");
+            System.out.println("Erro ao carregar dados completos do cliente para edição:");
             e.printStackTrace();
         }
+    }
+
+    private void handleExcluir(Cliente clienteSelecionado) {
+        System.out.println("Excluir cliente ID: " + clienteSelecionado.getIdCliente());
     }
 }
