@@ -354,6 +354,28 @@ public class TelaGerenciarClientes {
     }
 
     private void handleExcluir(Cliente clienteSelecionado) {
-        System.out.println("Excluir cliente ID: " + clienteSelecionado.getIdCliente());
+        String descricao;
+        if (clienteSelecionado instanceof PessoaFisica pf) {
+            descricao = pf.getNome();
+        } else if (clienteSelecionado instanceof PessoaJuridica pj) {
+            descricao = pj.getRazaoSocial();
+        } else {
+            descricao = "ID " + clienteSelecionado.getIdCliente();
+        }
+
+        boolean confirmado = ModalConfirmacao.confirmar(
+            "Confirmar Exclusão",
+            "Deseja excluir permanentemente o cliente?\n\n" + descricao
+        );
+        if (!confirmado) return;
+
+        try {
+            ClienteController ctrl = new ClienteController(clienteSelecionado);
+            ctrl.deletarCliente();
+            carregarDadosBanco();
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir cliente:");
+            e.printStackTrace();
+        }
     }
 }

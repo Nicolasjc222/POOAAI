@@ -318,11 +318,21 @@ public class TelaGerenciarImoveis {
     }
 
     private void handleExcluir(Imovel imovelSelecionado) {
+        Endereco end = imovelSelecionado.getEndereco();
+        String descricao = imovelSelecionado.getTipoPropriedade() + " — "
+                         + (end != null ? end.getRua() + ", " + end.getNumero() : "sem endereço");
+
+        boolean confirmado = ModalConfirmacao.confirmar(
+            "Confirmar Exclusão",
+            "Deseja excluir permanentemente o imóvel?\n\n" + descricao
+        );
+        if (!confirmado) return;
+
         try {
             ImovelController imovelCtrl = new ImovelController(imovelSelecionado);
             imovelCtrl.deletarImovel();
-            System.out.println("Imóvel ID " + imovelSelecionado.getIdImovel() + " excluído com sucesso.");
             carregarDadosBanco();
+            System.out.println("Imóvel ID " + imovelSelecionado.getIdImovel() + " excluído com sucesso.");
         } catch (Exception e) {
             System.out.println("Erro ao excluir Imóvel:");
             e.printStackTrace();

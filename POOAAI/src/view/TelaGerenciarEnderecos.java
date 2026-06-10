@@ -313,6 +313,15 @@ public class TelaGerenciarEnderecos {
     }
 
     private void handleExcluir(Endereco endereco) {
+        String descricao = endereco.getRua() + ", " + endereco.getNumero()
+                         + " - " + endereco.getBairro() + ", " + endereco.getCidade();
+
+        boolean confirmado = ModalConfirmacao.confirmar(
+            "Confirmar Exclusão",
+            "Deseja excluir permanentemente o endereço?\n\n" + descricao
+        );
+        if (!confirmado) return;
+
         try {
             EnderecoController controller = new EnderecoController(endereco);
             controller.deletarEndereco();
