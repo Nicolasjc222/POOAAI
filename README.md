@@ -4,6 +4,13 @@ Sistema de gerenciamento interno para imobiliárias, desenvolvido como projeto a
 
 ---
 
+## Grupo
+
+- Nicolas Antônio Lourenço Erler
+- Nycollas Baldim
+- Gabriel Ribeiro Rodrigues
+- Israel Caputo
+
 ## Tecnologias Utilizadas
 
 - Java 17
