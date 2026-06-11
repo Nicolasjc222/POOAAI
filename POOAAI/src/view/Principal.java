@@ -1,5 +1,9 @@
-package view;
+// Grupo: Nicolas Antonio Lourenco Erler
+// 		  Nycollas Baldim
+// 		  Gabriel Ribeiro Rodrigues
+// 		  Israel Caputo
 
+package view;
 
 import javafx.stage.Stage;
 import javafx.application.Application;

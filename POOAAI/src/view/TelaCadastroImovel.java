@@ -25,6 +25,7 @@ public class TelaCadastroImovel {
 
 	private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
 	private TextField tfTipoPropriedade, tfArea, tfValor, tfComodos;
+	private TextField tfIdCliente;
 	private ComboBox<String> cbFinalidade; // NOVO CAMPO
 	private Label lblErro;
 
@@ -76,6 +77,7 @@ public class TelaCadastroImovel {
 		tfArea            = new TextField(); tfArea.setPromptText("Área em m²");
 		tfValor           = new TextField(); tfValor.setPromptText("Valor em R$");
 		tfComodos         = new TextField(); tfComodos.setPromptText("Qtd. Cômodos");
+		tfIdCliente		  = new TextField(); tfIdCliente.setPromptText("ID do cliente dono do imóvel (opcional)");
 
 		// NOVO CAMPO: Caixa de seleção para Venda ou Aluguel
 		cbFinalidade = new ComboBox<>();
@@ -89,6 +91,7 @@ public class TelaCadastroImovel {
 		gridImovel.add(new Label("Valor (R$):"),      0, 2); gridImovel.add(tfValor,           1, 2);
 		gridImovel.add(new Label("Cômodos:"),         0, 3); gridImovel.add(tfComodos,         1, 3);
 		gridImovel.add(new Label("Finalidade:"),      0, 4); gridImovel.add(cbFinalidade,      1, 4); // ADICIONADO AQUI
+		gridImovel.add(new Label("Id Cliente:"),      0, 5); gridImovel.add(tfIdCliente,       1, 5);
 
 		VBox vboxImovel = new VBox(10, lblDadosImovel, gridImovel);
 
@@ -120,6 +123,7 @@ public class TelaCadastroImovel {
 
 	private boolean validarCampos() {
 		boolean numerosOk;
+		boolean idClienteOk;
 		try {
 			Integer.parseInt(tfNumero.getText().trim());
 			Integer.parseInt(tfArea.getText().trim());
@@ -129,7 +133,18 @@ public class TelaCadastroImovel {
 		} catch (NumberFormatException e) {
 			numerosOk = false;
 		}
-
+		String idCliente = tfIdCliente.getText().trim();
+	    if (idCliente.isEmpty()) {
+	        idClienteOk = true;
+	    } else {
+	        try {
+	            Integer.parseInt(idCliente);
+	            idClienteOk = true;
+	        } catch (NumberFormatException e) {
+	            idClienteOk = false;
+	        }
+	    }
+	    
 		return !tfRua.getText().trim().isEmpty() &&
 				!tfBairro.getText().trim().isEmpty() &&
 				!tfCidade.getText().trim().isEmpty() &&
@@ -137,7 +152,7 @@ public class TelaCadastroImovel {
 				tfCep.getText().trim().length() == 8 &&
 				!tfTipoPropriedade.getText().trim().isEmpty() &&
 				cbFinalidade.getValue() != null && // VALIDA SE A FINALIDADE FOI SELECIONADA
-				numerosOk;
+				numerosOk && idClienteOk;
 	}
 
 	private void handleCadastro() throws SQLException {
@@ -147,7 +162,10 @@ public class TelaCadastroImovel {
 			int area   = Integer.parseInt(tfArea.getText().trim());
 			int valor  = Integer.parseInt(tfValor.getText().trim());
 			int comodos = Integer.parseInt(tfComodos.getText().trim());
-
+			Integer idCliente = null;
+			if (!tfIdCliente.getText().trim().isEmpty()) {
+			    idCliente = Integer.parseInt(tfIdCliente.getText().trim());
+			}
 			Endereco endereco = new Endereco(
 					tfRua.getText().trim(), tfBairro.getText().trim(),
 					tfCidade.getText().trim(), tfUF.getText().trim(),
@@ -156,10 +174,7 @@ public class TelaCadastroImovel {
 			enderecoCtrl = new EnderecoController(endereco);
 			enderecoCtrl.salvarEndereco();
 
-			Imovel imovel = new Imovel(endereco, tfTipoPropriedade.getText().trim(), area, valor, comodos);
-
-			// ADICIONADO: Inserindo a finalidade no objeto antes de salvar
-			imovel.setFinalidade(cbFinalidade.getValue()); 
+			Imovel imovel = new Imovel(endereco, tfTipoPropriedade.getText().trim(), area, valor, comodos, idCliente, cbFinalidade.getValue());
 
 			imovelCtrl = new ImovelController(imovel);
 			imovelCtrl.salvarImovel();
@@ -185,6 +200,7 @@ public class TelaCadastroImovel {
 		tfArea.setText("");
 		tfValor.setText("");
 		tfComodos.setText("");
+		tfIdCliente.setText("");
 		cbFinalidade.setValue(""); // Limpa o ComboBox
 	}
 }

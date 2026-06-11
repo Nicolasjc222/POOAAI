@@ -25,6 +25,7 @@ public class TelaAtualizarImovel {
 
 	private TextField tfRua, tfCep, tfCidade, tfBairro, tfUF, tfNumero, tfComplemento;
 	private TextField tfTipoPropriedade, tfArea, tfValor, tfComodos;
+	private TextField tfIdCliente;
 	private ComboBox<String> cbFinalidade; 
 	private Label lblErro;
 	private Imovel imovelProcurado; // Imóvel carregado da tabela
@@ -91,6 +92,7 @@ public class TelaAtualizarImovel {
 		tfArea = new TextField(); tfArea.setText(String.valueOf(imovelProcurado.getArea()));
 		tfValor = new TextField(); tfValor.setText(String.valueOf(imovelProcurado.getValor()));
 		tfComodos = new TextField(); tfComodos.setText(String.valueOf(imovelProcurado.getComodos()));
+		tfIdCliente = new TextField(); tfIdCliente.setPromptText(imovelProcurado.getIdCliente() != null ? String.valueOf(imovelProcurado.getIdCliente()) : "");
 
 		cbFinalidade = new ComboBox<>();
 		cbFinalidade.getItems().addAll("Venda", "Aluguel");
@@ -98,11 +100,12 @@ public class TelaAtualizarImovel {
 
 		GridPane gridImovel = new GridPane();
 		gridImovel.setHgap(10); gridImovel.setVgap(12);
-		gridImovel.add(new Label("Tipo:"), 0, 0); gridImovel.add(tfTipoPropriedade, 1, 0);
-		gridImovel.add(new Label("Área:"), 2, 0); gridImovel.add(tfArea, 3, 0);
-		gridImovel.add(new Label("Valor:"), 0, 1); gridImovel.add(tfValor, 1, 1);
-		gridImovel.add(new Label("Cômodos:"), 2, 1); gridImovel.add(tfComodos, 3, 1);
-		gridImovel.add(new Label("Finalidade:"), 0, 2); gridImovel.add(cbFinalidade, 1, 2);
+		gridImovel.add(new Label("Tipo (Casa/Apt):"), 0, 0); gridImovel.add(tfTipoPropriedade, 1, 0);
+		gridImovel.add(new Label("Área (m²):"),       0, 1); gridImovel.add(tfArea,            1, 1);
+		gridImovel.add(new Label("Valor (R$):"),      0, 2); gridImovel.add(tfValor,           1, 2);
+		gridImovel.add(new Label("Cômodos:"),         0, 3); gridImovel.add(tfComodos,         1, 3);
+		gridImovel.add(new Label("Finalidade:"),      0, 4); gridImovel.add(cbFinalidade,      1, 4);
+		gridImovel.add(new Label("Id Cliente:"),      0, 5); gridImovel.add(tfIdCliente,       1, 5);
 
 		VBox vboxImovel = new VBox(10, lblDadosImovel, gridImovel);
 
@@ -141,6 +144,7 @@ public class TelaAtualizarImovel {
 
 	private boolean validarCampos() {
 		boolean numerosOk;
+		boolean idClienteOk;
 		try {
 			Integer.parseInt(tfNumero.getText().trim());
 			Integer.parseInt(tfArea.getText().trim());
@@ -150,15 +154,26 @@ public class TelaAtualizarImovel {
 		} catch (NumberFormatException e) {
 			numerosOk = false;
 		}
-
+		String idCliente = tfIdCliente.getText().trim();
+	    if (idCliente.isEmpty()) {
+	        idClienteOk = true;
+	    } else {
+	        try {
+	            Integer.parseInt(idCliente);
+	            idClienteOk = true;
+	        } catch (NumberFormatException e) {
+	            idClienteOk = false;
+	        }
+	    }
+	    
 		return !tfRua.getText().trim().isEmpty() &&
 				!tfBairro.getText().trim().isEmpty() &&
 				!tfCidade.getText().trim().isEmpty() &&
 				tfUF.getText().trim().length() == 2 &&
 				tfCep.getText().trim().length() == 8 &&
 				!tfTipoPropriedade.getText().trim().isEmpty() &&
-				cbFinalidade.getValue() != null &&
-				numerosOk;
+				cbFinalidade.getValue() != null && // VALIDA SE A FINALIDADE FOI SELECIONADA
+				numerosOk && idClienteOk;
 	}
 
 	private void handleAtualizar() throws SQLException {
@@ -168,7 +183,10 @@ public class TelaAtualizarImovel {
 			int area = Integer.parseInt(tfArea.getText().trim());
 			int valor = Integer.parseInt(tfValor.getText().trim());
 			int comodos = Integer.parseInt(tfComodos.getText().trim());
-
+			Integer idCliente = null;
+			if (!tfIdCliente.getText().trim().isEmpty()) {
+			    idCliente = Integer.parseInt(tfIdCliente.getText().trim());
+			}
 			Endereco endereco = imovelProcurado.getEndereco();
 			endereco.setRua(tfRua.getText().trim());
 			endereco.setBairro(tfBairro.getText().trim());
@@ -185,6 +203,7 @@ public class TelaAtualizarImovel {
 			imovelProcurado.setArea(area);
 			imovelProcurado.setValor(valor);
 			imovelProcurado.setComodos(comodos);
+			imovelProcurado.setIdCliente(idCliente);
 			imovelProcurado.setFinalidade(cbFinalidade.getValue());
 
 			imovelCtrl = new ImovelController(imovelProcurado);
